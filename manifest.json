@@ -1,9 +1,0 @@
-{
-  "name": "Asteroid Nova",
-  "short_name": "AsteroidNova",
-  "start_url": "index.html",
-  "display": "fullscreen",
-  "orientation": "landscape",
-  "background_color": "#050510",
-  "theme_color": "#00f3ff"
-}
