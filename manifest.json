@@ -4,6 +4,7 @@
   "display": "standalone",
   "name": "asteroid-nova",
   "orientation": "any",
+  "id": "/asteroid-nova/",
   "description": "Asteroid Nova - Blast your way through deep space in this fast-paced, neon-drenched arcade shooter! Pilot an agile starfighter through treacherous asteroid fields, shatter incoming meteors into glowing fragments, and survive escalating waves of cosmic chaos.",
   "scope": "/",
   "short_name": "asteroid-nova",
