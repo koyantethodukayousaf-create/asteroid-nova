@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "display_override": [
-    "window-controls-overlay",
     "tabbed",
+    "window-controls-overlay",
     "standalone",
     "minimal-ui"
   ],
@@ -86,6 +86,33 @@
   "note_taking": {
     "note_new_url": "/new-note"
   },
+  "widgets": [
+    {
+      "name": "Asteroid Nova Widget",
+      "description": "Quick status and launch widget for Asteroid Nova",
+      "tag": "asteroid-nova-widget",
+      "template": "asteroid-nova-template",
+      "ms_ac_template": "widget-template.json",
+      "data": "widget-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "launchericon-512x512.png",
+          "sizes": "512x512",
+          "label": "Asteroid Nova Widget Preview"
+        }
+      ],
+      "icons": [
+        {
+          "src": "launchericon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ],
+      "auth": false,
+      "update": 86400
+    }
+  ],
   "icons": [
     {
       "src": "launchericon-48x48.png",
