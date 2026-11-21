@@ -1,15 +1,15 @@
 {
   "name": "asteroid-nova",
   "short_name": "asteroid-nova",
-  "description": "Asteroid Nova - Blast your way through deep space in this fast-paced, neon-drenched arcade shooter! Pilot an agile starfighter through treacherous asteroid fields, shatter incoming meteors into glowing fragments, and survive escalating waves of cosmic chaos.",
+  "description": "Asteroid Nova - Blast your way through deep space in this fast-paced, neon-drenched arcade shooter!",
   "id": "/asteroid-nova/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
-    "standalone",
-    "minimal-ui"
+    "tabbed",
+    "standalone"
   ],
   "orientation": "any",
   "background_color": "#ffffff",
@@ -20,18 +20,33 @@
     "games",
     "arcade"
   ],
-  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
-  "prefer_related_applications": false,
-  "related_applications": [
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 300
+  },
+  "share_target": {
+    "action": "/share-target/",
+    "method": "POST",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "file_handlers": [
     {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=com.example.app",
-      "id": "com.example.app"
+      "action": "/handle-file/",
+      "accept": {
+        "image/*": [".png", ".jpg", ".jpeg"]
+      }
     }
   ],
-  "scope_extensions": [
+  "protocol_handlers": [
     {
-      "origin": "https://*.example.com"
+      "protocol": "web+mypwa",
+      "url": "/protocol-handler?value=%s"
     }
   ],
   "icons": [
