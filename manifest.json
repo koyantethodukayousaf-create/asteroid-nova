@@ -7,9 +7,9 @@
   "scope": "/asteroid-nova/",
   "display": "standalone",
   "display_override": [
-    "tabbed",
-    "window-controls-overlay",
     "standalone",
+    "fullscreen",
+    "window-controls-overlay",
     "minimal-ui"
   ],
   "tab_strip": {
@@ -21,8 +21,8 @@
     }
   },
   "orientation": "landscape",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#050510",
+  "theme_color": "#050510",
   "lang": "en",
   "dir": "ltr",
   "categories": [
