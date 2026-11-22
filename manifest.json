@@ -121,6 +121,53 @@
       "update": 86400
     }
   ],
+  "screenshots": [
+    {
+      "src": "IMG_20261122_052359.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052425.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052501.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052521.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052555.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052633.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052659.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052715.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052744.jpg",
+      "sizes": "1080x2400",
+      "type": "image/jpeg"
+    }
+  ],
   "icons": [
     {
       "src": "launchericon-48x48.png",
