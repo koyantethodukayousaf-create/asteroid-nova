@@ -418,6 +418,20 @@ async function lockLandscape() {
     }
 }
 
+// Try landscape/fullscreen on load and on first user touch anywhere
+window.addEventListener('DOMContentLoaded', () => {
+    lockLandscape();
+});
+
+function handleFirstInteraction() {
+    lockLandscape();
+    window.removeEventListener('pointerdown', handleFirstInteraction);
+    window.removeEventListener('touchstart', handleFirstInteraction);
+}
+
+window.addEventListener('pointerdown', handleFirstInteraction, { passive: true });
+window.addEventListener('touchstart', handleFirstInteraction, { passive: true });
+
 function readHighScore() {
     try {
         return Number(localStorage.getItem('asteroidNovaHigh')) || 0;
