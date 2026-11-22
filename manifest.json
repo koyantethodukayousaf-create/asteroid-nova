@@ -33,6 +33,9 @@
   "scope_extensions": [
     {
       "origin": "https://asteroid-nova.github.io"
+    },
+    {
+      "origin": "https://sub.yourdomain.com"
     }
   ],
   "launch_handler": {
