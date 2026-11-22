@@ -1,4 +1,4 @@
-const CACHE_NAME = 'asteroid-nova-v1';
+const CACHE_NAME = 'asteroid-nova-v2';
 const ASSETS_TO_CACHE = [
   '/asteroid-nova/',
   '/asteroid-nova/index.html',
@@ -34,30 +34,34 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
+      if (cachedResponse) {
+        return cachedResponse;
+      }
 
-      return fetch(event.request).then((networkResponse) => {
-        if (
-          !networkResponse ||
-          networkResponse.status !== 200 ||
-          networkResponse.type !== 'basic'
-        ) {
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (
+            !networkResponse ||
+            networkResponse.status !== 200 ||
+            networkResponse.type !== 'basic'
+          ) {
+            return networkResponse;
+          }
+
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+
           return networkResponse;
-        }
-
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return networkResponse;
-      });
+        })
+        .catch(() => caches.match('/asteroid-nova/index.html'));
     })
   );
 });
 
 self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.text() : 'Default notification';
+  const data = event.data ? event.data.text() : 'New update available in Asteroid Nova!';
   event.waitUntil(
     self.registration.showNotification('Asteroid Nova', {
       body: data,
