@@ -372,6 +372,20 @@ const restartBtn = document.getElementById('restart-btn');
 const muteBtn = document.getElementById('btn-mute');
 const pauseBtn = document.getElementById('btn-pause');
 
+// --- Orientation Lock Helper ---
+async function lockLandscape() {
+    try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+            await document.documentElement.requestFullscreen().catch(() => {});
+        }
+        if (screen.orientation && typeof screen.orientation.lock === 'function') {
+            await screen.orientation.lock('landscape').catch(() => {});
+        }
+    } catch (e) {
+        // Ignore if unsupported or blocked by device/browser policy
+    }
+}
+
 function readHighScore() {
     try {
         return Number(localStorage.getItem('asteroidNovaHigh')) || 0;
@@ -903,6 +917,7 @@ function updateHUD() {
 
 // --- Core Game Flow ---
 function startGame() {
+    lockLandscape();
     sfx.init();
     gameState.running = true;
     gameState.paused = false;
@@ -923,6 +938,11 @@ function startGame() {
     startScreen.classList.add('hidden');
     gameoverScreen.classList.add('hidden');
     pauseBtn.textContent = '⏸';
+}
+
+function restartGame() {
+    lockLandscape();
+    startGame();
 }
 
 function gameOver() {
@@ -1234,7 +1254,7 @@ bindControlButton('btn-fire', 'fire');
 
 // UI Button Listeners
 startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', restartGame);
 pauseBtn.addEventListener('click', togglePause);
 
 muteBtn.addEventListener('click', () => {
