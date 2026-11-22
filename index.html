@@ -372,6 +372,22 @@ const restartBtn = document.getElementById('restart-btn');
 const muteBtn = document.getElementById('btn-mute');
 const pauseBtn = document.getElementById('btn-pause');
 
+function readHighScore() {
+    try {
+        return Number(localStorage.getItem('asteroidNovaHigh')) || 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
+function saveHighScore(score) {
+    try {
+        localStorage.setItem('asteroidNovaHigh', String(score));
+    } catch (e) {
+        // Ignore storage errors in restricted contexts
+    }
+}
+
 // --- Web Audio API Synthesizer (No external audio files required) ---
 class SoundFX {
     constructor() {
@@ -478,7 +494,7 @@ const gameState = {
     running: false,
     paused: false,
     score: 0,
-    highScore: localStorage.getItem('asteroidNovaHigh') || 0,
+    highScore: readHighScore(),
     level: 1,
     lives: 3,
     screenShake: 0
@@ -913,7 +929,7 @@ function gameOver() {
     gameState.running = false;
     if (gameState.score > gameState.highScore) {
         gameState.highScore = gameState.score;
-        localStorage.setItem('asteroidNovaHigh', gameState.highScore);
+        saveHighScore(gameState.highScore);
     }
     finalScoreText.innerHTML = `Final Score: <strong style="color:#00f3ff;">${gameState.score.toLocaleString()}</strong><br>Best Score: <strong style="color:#bd00ff;">${Number(gameState.highScore).toLocaleString()}</strong>`;
     gameoverScreen.classList.remove('hidden');
@@ -1232,13 +1248,13 @@ window.onload = function () {
     updateHUD();
     gameLoop();
 };
-<script>
-  if (typeof navigator.serviceWorker !== 'undefined') {
-    navigator.serviceWorker.register('sw.js')
-  }
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: '/asteroid-nova/' }).catch(() => {});
+    });
+  }
 </script>
 </body>
 </html>
-
-```
