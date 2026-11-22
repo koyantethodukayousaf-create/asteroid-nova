@@ -1,4 +1,4 @@
-const CACHE_NAME = 'asteroid-nova-v4';
+const CACHE_NAME = 'asteroid-nova-v5';
 const ASSETS_TO_CACHE = [
   '/asteroid-nova/',
   '/asteroid-nova/index.html',
@@ -13,7 +13,17 @@ const ASSETS_TO_CACHE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(
+        ASSETS_TO_CACHE.map((url) =>
+          fetch(url).then((response) => {
+            if (response.ok) {
+              return cache.put(url, response);
+            }
+          })
+        )
+      )
+    )
   );
   self.skipWaiting();
 });
