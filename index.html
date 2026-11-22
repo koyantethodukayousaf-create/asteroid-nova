@@ -283,6 +283,38 @@
                 padding: 20px 26px;
             }
         }
+
+        /* Landscape Control Bar Cleanup (Step 1) */
+        @media (orientation: landscape) {
+            .controls-hint {
+                display: none;
+            }
+
+            #controls-bar {
+                margin-top: 8px;
+                padding: 6px 16px;
+                gap: 12px;
+            }
+
+            #joystick-zone {
+                width: 76px;
+                height: 76px;
+            }
+
+            #joystick-knob {
+                width: 32px;
+                height: 32px;
+            }
+
+            .btn-fire {
+                padding: 12px 22px;
+                font-size: 0.95rem;
+            }
+
+            .btn-control {
+                padding: 10px 14px;
+            }
+        }
     </style>
 </head>
 <body>
