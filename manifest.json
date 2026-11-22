@@ -3,8 +3,8 @@
   "short_name": "asteroid-nova",
   "description": "Asteroid Nova - Blast your way through deep space in this fast-paced, neon-drenched arcade shooter! Pilot an agile starfighter through treacherous asteroid fields, shatter incoming meteors into glowing fragments, and survive escalating waves of cosmic chaos.",
   "id": "/asteroid-nova/",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/asteroid-nova/",
+  "scope": "/asteroid-nova/",
   "display": "standalone",
   "display_override": [
     "tabbed",
@@ -12,6 +12,14 @@
     "standalone",
     "minimal-ui"
   ],
+  "tab_strip": {
+    "home_tab": {
+      "url": "/asteroid-nova/"
+    },
+    "new_tab_button": {
+      "url": "/asteroid-nova/"
+    }
+  },
   "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
@@ -32,10 +40,7 @@
   ],
   "scope_extensions": [
     {
-      "origin": "https://asteroid-nova.github.io"
-    },
-    {
-      "origin": "https://sub.yourdomain.com"
+      "origin": "https://koyantethodukayousaf.github.io"
     }
   ],
   "launch_handler": {
@@ -45,7 +50,7 @@
     "preferred_width": 300
   },
   "share_target": {
-    "action": "/share-target/",
+    "action": "/asteroid-nova/share-target/",
     "method": "POST",
     "params": {
       "title": "title",
@@ -55,7 +60,7 @@
   },
   "file_handlers": [
     {
-      "action": "/handle-file/",
+      "action": "/asteroid-nova/handle-file/",
       "accept": {
         "image/*": [
           ".png",
@@ -68,7 +73,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+mypwa",
-      "url": "/protocol-handler?value=%s"
+      "url": "/asteroid-nova/protocol-handler?value=%s"
     }
   ],
   "shortcuts": [
@@ -76,7 +81,7 @@
       "name": "Launch Mission",
       "short_name": "Play",
       "description": "Start the arcade game",
-      "url": "/?play=true",
+      "url": "/asteroid-nova/?play=true",
       "icons": [
         {
           "src": "launchericon-96x96.png",
@@ -87,7 +92,7 @@
     }
   ],
   "note_taking": {
-    "note_new_url": "/new-note"
+    "new_note_url": "/asteroid-nova/"
   },
   "widgets": [
     {
