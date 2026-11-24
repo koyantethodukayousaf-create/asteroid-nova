@@ -30,6 +30,7 @@
             touch-action: none;
             width: 100%;
             height: 100%;
+            height: 100dvh;
             position: fixed;
             inset: 0;
         }
@@ -42,6 +43,7 @@
             inset: 0;
             width: 100%;
             height: 100%;
+            height: 100dvh;
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
@@ -51,7 +53,7 @@
 
         /* Full-Viewport Canvas Container */
         #canvas-container {
-            position: absolute;
+            position: relative;
             inset: 0;
             width: 100%;
             height: 100%;
@@ -66,14 +68,15 @@
             position: absolute;
             inset: 0;
             z-index: 2;
+            pointer-events: none;
         }
 
         /* Top HUD Overlay */
         #hud {
             position: fixed;
             top: max(10px, env(safe-area-inset-top));
-            left: max(14px, env(safe-area-inset-left));
-            right: max(14px, env(safe-area-inset-right));
+            left: max(16px, env(safe-area-inset-left));
+            right: max(16px, env(safe-area-inset-right));
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -88,10 +91,10 @@
         }
 
         .hud-box {
-            background: rgba(10, 15, 35, 0.65);
+            background: rgba(10, 15, 35, 0.72);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(0, 243, 255, 0.34);
+            border: 1px solid rgba(0, 243, 255, 0.36);
             border-radius: 10px;
             padding: 6px 14px;
             display: flex;
@@ -141,14 +144,15 @@
             display: flex;
             gap: 8px;
             pointer-events: auto;
+            z-index: 32;
         }
 
         .btn-utility {
             width: 38px;
             height: 38px;
             border-radius: 10px;
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            background: rgba(10, 15, 35, 0.72);
+            border: 1px solid rgba(0, 243, 255, 0.45);
+            background: rgba(10, 15, 35, 0.82);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             color: #00f3ff;
@@ -171,14 +175,14 @@
         /* Floating Cockpit Controls Overlay (Always Visible Over Canvas & Fullscreen) */
         #cockpit-overlay {
             position: fixed;
-            bottom: max(12px, env(safe-area-inset-bottom));
-            left: max(16px, env(safe-area-inset-left));
-            right: max(16px, env(safe-area-inset-right));
+            bottom: max(14px, env(safe-area-inset-bottom));
+            left: max(22px, env(safe-area-inset-left));
+            right: max(22px, env(safe-area-inset-right));
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             pointer-events: none;
-            z-index: 35;
+            z-index: 40;
         }
 
         /* Virtual Analog Joystick (Bottom Left Overlay) */
@@ -189,16 +193,17 @@
             height: 98px;
             flex-shrink: 0;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 243, 255, 0.14) 0%, rgba(11, 16, 36, 0.58) 100%);
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.16) 0%, rgba(11, 16, 36, 0.72) 100%);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            border: 2px solid rgba(0, 243, 255, 0.48);
-            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.16), 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 243, 255, 0.58);
+            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.2), 0 4px 15px rgba(0, 0, 0, 0.55);
             display: flex;
             align-items: center;
             justify-content: center;
             touch-action: none;
             cursor: grab;
+            z-index: 41;
         }
 
         #joystick-zone:active {
@@ -226,6 +231,7 @@
             align-items: end;
             justify-items: end;
             flex-shrink: 0;
+            z-index: 41;
         }
 
         .btn-tactical {
@@ -238,8 +244,8 @@
             width: 74px;
             height: 52px;
             border-radius: 14px;
-            border: 1.5px solid rgba(0, 243, 255, 0.52);
-            background: rgba(12, 18, 40, 0.64);
+            border: 1.5px solid rgba(0, 243, 255, 0.62);
+            background: rgba(12, 18, 40, 0.78);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             color: #00f3ff;
@@ -249,17 +255,19 @@
             justify-content: center;
             gap: 2px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             transition: transform 0.12s ease, box-shadow 0.15s ease, opacity 0.2s ease;
             touch-action: none;
         }
 
         .btn-tactical span.icon {
             font-size: 1rem;
+            line-height: 1;
             z-index: 2;
         }
 
         .btn-tactical span.label {
+            line-height: 1.1;
             z-index: 2;
         }
 
@@ -284,31 +292,31 @@
         }
 
         .btn-boost {
-            border-color: rgba(0, 243, 255, 0.55);
+            border-color: rgba(0, 243, 255, 0.65);
             color: #00f3ff;
         }
         .btn-boost:active, .btn-boost.active {
-            background: rgba(0, 243, 255, 0.8);
+            background: rgba(0, 243, 255, 0.85);
             color: #050510;
             box-shadow: 0 0 18px #00f3ff;
         }
 
         .btn-shield {
-            border-color: rgba(0, 255, 136, 0.55);
+            border-color: rgba(0, 255, 136, 0.65);
             color: #00ff88;
         }
         .btn-shield:active, .btn-shield.active {
-            background: rgba(0, 255, 136, 0.8);
+            background: rgba(0, 255, 136, 0.85);
             color: #050510;
             box-shadow: 0 0 18px #00ff88;
         }
 
         .btn-missile {
-            border-color: rgba(255, 170, 0, 0.65);
+            border-color: rgba(255, 170, 0, 0.72);
             color: #ffaa00;
         }
         .btn-missile:active, .btn-missile.active {
-            background: rgba(255, 170, 0, 0.8);
+            background: rgba(255, 170, 0, 0.85);
             color: #050510;
             box-shadow: 0 0 18px #ffaa00;
         }
@@ -318,10 +326,10 @@
             height: 62px;
             border-radius: 18px;
             border: 2px solid #ff007f;
-            background: rgba(35, 10, 28, 0.7);
+            background: rgba(35, 10, 28, 0.82);
             color: #ff007f;
             font-size: 0.8rem;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.25);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
         }
 
         .btn-fire:active, .btn-fire.active {
@@ -336,7 +344,8 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 8, 20, 0.84);
+            height: 100dvh;
+            background: rgba(5, 8, 20, 0.86);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: flex;
@@ -344,8 +353,8 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 24px;
-            z-index: 50;
+            padding: max(16px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left));
+            z-index: 60;
             transition: opacity 0.25s ease;
         }
 
@@ -387,6 +396,7 @@
             transition: all 0.15s ease;
             text-transform: uppercase;
             letter-spacing: 1.5px;
+            touch-action: manipulation;
         }
 
         .btn-arcade:hover {
@@ -399,17 +409,17 @@
             transform: translateY(1px) scale(0.97);
         }
 
-        /* Compact Scaling for Mobile Landscape & Fullscreen Screens */
+        /* Compact Scaling for 19.5:9 Mobile Landscape & Fullscreen Screens */
         @media (max-height: 540px) and (orientation: landscape) {
             #hud {
                 top: max(8px, env(safe-area-inset-top));
-                left: max(12px, env(safe-area-inset-left));
-                right: max(12px, env(safe-area-inset-right));
+                left: max(20px, env(safe-area-inset-left));
+                right: max(20px, env(safe-area-inset-right));
             }
             #cockpit-overlay {
                 bottom: max(10px, env(safe-area-inset-bottom));
-                left: max(14px, env(safe-area-inset-left));
-                right: max(14px, env(safe-area-inset-right));
+                left: max(24px, env(safe-area-inset-left));
+                right: max(24px, env(safe-area-inset-right));
             }
             .hud-box {
                 padding: 4px 10px;
@@ -547,6 +557,7 @@
 
 // --- DOM Elements ---
 const gameWrapper = document.getElementById('game-wrapper');
+const canvasContainer = document.getElementById('canvas-container');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -812,14 +823,29 @@ let powerups = [];
 let floatingTexts = [];
 let stars = [];
 
+function getPlayfieldBounds() {
+    const isLandscapeCompact = width > height && height <= 540;
+    const horizontalPad = isLandscapeCompact ? 96 : 56;
+    const topPad = isLandscapeCompact ? 54 : 68;
+    const bottomPad = isLandscapeCompact ? 76 : 108;
+
+    return {
+        minX: Math.min(width * 0.25, horizontalPad),
+        maxX: Math.max(width * 0.75, width - horizontalPad),
+        minY: Math.min(height * 0.25, topPad),
+        maxY: Math.max(height * 0.75, height - bottomPad)
+    };
+}
+
 function clampEntityPositionsAfterResize() {
     const pad = 28;
     const safeW = Math.max(pad * 2, width);
     const safeH = Math.max(pad * 2, height);
+    const bounds = getPlayfieldBounds();
 
     if (ship) {
-        ship.x = Math.min(safeW - pad, Math.max(pad, ship.x));
-        ship.y = Math.min(safeH - pad, Math.max(pad, ship.y));
+        ship.x = Math.min(bounds.maxX, Math.max(bounds.minX, ship.x));
+        ship.y = Math.min(bounds.maxY, Math.max(bounds.minY, ship.y));
     }
     asteroids.forEach(a => {
         a.x = Math.min(safeW, Math.max(0, a.x));
@@ -834,19 +860,24 @@ function clampEntityPositionsAfterResize() {
         m.y = Math.min(safeH, Math.max(0, m.y));
     });
     powerups.forEach(p => {
-        p.x = Math.min(safeW - pad, Math.max(pad, p.x));
-        p.y = Math.min(safeH - pad, Math.max(pad, p.y));
+        p.x = Math.min(bounds.maxX, Math.max(bounds.minX, p.x));
+        p.y = Math.min(bounds.maxY, Math.max(bounds.minY, p.y));
     });
 }
 
 // --- True 100% Edge-to-Edge Full-Screen Resize Handler ---
 function resizeCanvas() {
     const vv = window.visualViewport;
+    const wrapperRect = gameWrapper ? gameWrapper.getBoundingClientRect() : null;
     const clientW = document.documentElement.clientWidth || window.innerWidth;
     const clientH = document.documentElement.clientHeight || window.innerHeight;
 
-    const rawW = vv ? vv.width : clientW;
-    const rawH = vv ? vv.height : clientH;
+    const rawW = (wrapperRect && wrapperRect.width > 0)
+        ? wrapperRect.width
+        : (vv && vv.width > 0 ? vv.width : clientW);
+    const rawH = (wrapperRect && wrapperRect.height > 0)
+        ? wrapperRect.height
+        : (vv && vv.height > 0 ? vv.height : clientH);
 
     width = Math.max(240, Math.round(rawW));
     height = Math.max(200, Math.round(rawH));
@@ -870,11 +901,19 @@ function scheduleResizeBurst() {
 
 window.addEventListener('resize', resizeCanvas);
 if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', resizeCanvas);
+    window.visualViewport.addEventListener('resize', scheduleResizeBurst);
+    window.visualViewport.addEventListener('scroll', resizeCanvas);
 }
 window.addEventListener('orientationchange', scheduleResizeBurst);
 document.addEventListener('fullscreenchange', scheduleResizeBurst);
 document.addEventListener('webkitfullscreenchange', scheduleResizeBurst);
+
+if (typeof ResizeObserver !== 'undefined' && gameWrapper) {
+    const wrapperObserver = new ResizeObserver(() => {
+        resizeCanvas();
+    });
+    wrapperObserver.observe(gameWrapper);
+}
 
 // --- Multi-Layer Parallax Starfield ---
 function initStars() {
@@ -958,8 +997,9 @@ class FloatingText {
 // --- Player Ship Class (With Boost, Shield & Homing Missile Systems) ---
 class Ship {
     constructor() {
-        this.x = width / 2;
-        this.y = height / 2;
+        const bounds = getPlayfieldBounds();
+        this.x = (bounds.minX + bounds.maxX) / 2;
+        this.y = (bounds.minY + bounds.maxY) / 2;
         this.vx = 0;
         this.vy = 0;
         this.angle = -Math.PI / 2;
@@ -1053,15 +1093,24 @@ class Ship {
             this.vy = (this.vy / speed) * maxSpeed;
         }
 
-        this.x = (this.x + this.vx * dt + width) % width;
-        this.y = (this.y + this.vy * dt + height) % height;
+        const bounds = getPlayfieldBounds();
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
 
-        const margin = this.radius + 8;
-        if (width > margin * 2) {
-            this.x = Math.min(width - margin, Math.max(margin, this.x));
+        if (this.x < bounds.minX) {
+            this.x = bounds.minX;
+            if (this.vx < 0) this.vx *= -0.25;
+        } else if (this.x > bounds.maxX) {
+            this.x = bounds.maxX;
+            if (this.vx > 0) this.vx *= -0.25;
         }
-        if (height > margin * 2) {
-            this.y = Math.min(height - margin, Math.max(margin, this.y));
+
+        if (this.y < bounds.minY) {
+            this.y = bounds.minY;
+            if (this.vy < 0) this.vy *= -0.25;
+        } else if (this.y > bounds.maxY) {
+            this.y = bounds.maxY;
+            if (this.vy > 0) this.vy *= -0.25;
         }
 
         if (this.invulnerable > 0) this.invulnerable = Math.max(0, this.invulnerable - dt);
@@ -1423,7 +1472,6 @@ class PowerUp {
 
 // --- Balanced Scoring Helpers ---
 function getAsteroidPoints(size) {
-    // Size 3 (large): 15, Size 2 (medium): 25, Size 1 (small): 40
     if (size === 3) return 15;
     if (size === 2) return 25;
     return 40;
@@ -1522,6 +1570,7 @@ function startGame() {
     pauseBtn.textContent = '⏸';
 
     setTimeout(lockLandscapeNonBlocking, 10);
+    scheduleResizeBurst();
 }
 
 function restartGame() {
@@ -1705,8 +1754,9 @@ function updateGame(dt = 1) {
                     gameOver();
                     return;
                 } else {
-                    ship.x = width / 2;
-                    ship.y = height / 2;
+                    const bounds = getPlayfieldBounds();
+                    ship.x = (bounds.minX + bounds.maxX) / 2;
+                    ship.y = (bounds.minY + bounds.maxY) / 2;
                     ship.vx = 0;
                     ship.vy = 0;
                     ship.invulnerable = 150;
@@ -1889,6 +1939,7 @@ function bindControlButton(btnId, keyName) {
     const btn = document.getElementById(btnId);
     const press = (e) => {
         e.preventDefault();
+        sfx.init();
         keys[keyName] = true;
         btn.classList.add('active');
     };
