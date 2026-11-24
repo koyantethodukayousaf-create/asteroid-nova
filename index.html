@@ -28,21 +28,21 @@
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             height: 100dvh;
             position: fixed;
             inset: 0;
         }
 
-        /* True 100% Edge-to-Edge Viewport Wrapper */
+        /* True Edge-to-Edge Viewport Wrapper */
         #game-wrapper,
         #game-wrapper:fullscreen,
         #game-wrapper:-webkit-full-screen {
             position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             height: 100dvh;
             overflow: hidden;
             overscroll-behavior: none;
@@ -54,7 +54,6 @@
         /* Full-Viewport Canvas Container */
         #canvas-container {
             position: relative;
-            inset: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
@@ -66,7 +65,8 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            inset: 0;
+            top: 0;
+            left: 0;
             z-index: 2;
             pointer-events: none;
         }
@@ -74,9 +74,9 @@
         /* Top HUD Overlay */
         #hud {
             position: fixed;
-            top: max(10px, env(safe-area-inset-top));
-            left: max(16px, env(safe-area-inset-left));
-            right: max(16px, env(safe-area-inset-right));
+            top: max(8px, env(safe-area-inset-top));
+            left: max(14px, env(safe-area-inset-left));
+            right: max(14px, env(safe-area-inset-right));
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -87,24 +87,24 @@
         .hud-left-group, .hud-right-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .hud-box {
-            background: rgba(10, 15, 35, 0.72);
+            background: rgba(10, 15, 35, 0.74);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(0, 243, 255, 0.36);
+            border: 1px solid rgba(0, 243, 255, 0.38);
             border-radius: 10px;
-            padding: 6px 14px;
+            padding: 5px 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.45);
         }
 
         .hud-label {
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             color: #8892b0;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -112,7 +112,7 @@
 
         .hud-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: #00f3ff;
             text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
@@ -120,7 +120,7 @@
 
         #combo-badge {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: #ffaa00;
             text-shadow: 0 0 8px rgba(255, 170, 0, 0.7);
@@ -135,28 +135,28 @@
 
         #lives-container {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             align-items: center;
         }
 
         /* Top-Right Compact Mute & Pause Buttons */
         .top-utility-controls {
             display: flex;
-            gap: 8px;
+            gap: 7px;
             pointer-events: auto;
-            z-index: 32;
+            z-index: 35;
         }
 
         .btn-utility {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 10px;
-            border: 1px solid rgba(0, 243, 255, 0.45);
-            background: rgba(10, 15, 35, 0.82);
+            border: 1px solid rgba(0, 243, 255, 0.48);
+            background: rgba(10, 15, 35, 0.85);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             color: #00f3ff;
-            font-size: 1rem;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -175,35 +175,35 @@
         /* Floating Cockpit Controls Overlay (Always Visible Over Canvas & Fullscreen) */
         #cockpit-overlay {
             position: fixed;
-            bottom: max(14px, env(safe-area-inset-bottom));
-            left: max(22px, env(safe-area-inset-left));
-            right: max(22px, env(safe-area-inset-right));
+            bottom: max(12px, env(safe-area-inset-bottom));
+            left: max(18px, env(safe-area-inset-left));
+            right: max(18px, env(safe-area-inset-right));
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             pointer-events: none;
-            z-index: 40;
+            z-index: 45;
         }
 
         /* Virtual Analog Joystick (Bottom Left Overlay) */
         #joystick-zone {
             pointer-events: auto;
             position: relative;
-            width: 98px;
-            height: 98px;
+            width: 96px;
+            height: 96px;
             flex-shrink: 0;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 243, 255, 0.16) 0%, rgba(11, 16, 36, 0.72) 100%);
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.18) 0%, rgba(11, 16, 36, 0.78) 100%);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            border: 2px solid rgba(0, 243, 255, 0.58);
-            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.2), 0 4px 15px rgba(0, 0, 0, 0.55);
+            border: 2px solid rgba(0, 243, 255, 0.65);
+            box-shadow: inset 0 0 15px rgba(0, 243, 255, 0.22), 0 4px 15px rgba(0, 0, 0, 0.55);
             display: flex;
             align-items: center;
             justify-content: center;
             touch-action: none;
             cursor: grab;
-            z-index: 41;
+            z-index: 46;
         }
 
         #joystick-zone:active {
@@ -212,7 +212,7 @@
         }
 
         #joystick-knob {
-            position: absolute;
+            position: relative;
             width: 38px;
             height: 38px;
             border-radius: 50%;
@@ -227,11 +227,11 @@
             pointer-events: auto;
             display: grid;
             grid-template-columns: repeat(2, auto);
-            gap: 10px;
+            gap: 9px;
             align-items: end;
             justify-items: end;
             flex-shrink: 0;
-            z-index: 41;
+            z-index: 46;
         }
 
         .btn-tactical {
@@ -239,13 +239,13 @@
             overflow: hidden;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.7rem;
-            letter-spacing: 0.8px;
-            width: 74px;
-            height: 52px;
-            border-radius: 14px;
-            border: 1.5px solid rgba(0, 243, 255, 0.62);
-            background: rgba(12, 18, 40, 0.78);
+            font-size: 0.68rem;
+            letter-spacing: 0.7px;
+            width: 72px;
+            height: 50px;
+            border-radius: 13px;
+            border: 1.5px solid rgba(0, 243, 255, 0.65);
+            background: rgba(12, 18, 40, 0.84);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             color: #00f3ff;
@@ -261,7 +261,7 @@
         }
 
         .btn-tactical span.icon {
-            font-size: 1rem;
+            font-size: 0.98rem;
             line-height: 1;
             z-index: 2;
         }
@@ -292,44 +292,44 @@
         }
 
         .btn-boost {
-            border-color: rgba(0, 243, 255, 0.65);
+            border-color: rgba(0, 243, 255, 0.68);
             color: #00f3ff;
         }
         .btn-boost:active, .btn-boost.active {
-            background: rgba(0, 243, 255, 0.85);
+            background: rgba(0, 243, 255, 0.88);
             color: #050510;
             box-shadow: 0 0 18px #00f3ff;
         }
 
         .btn-shield {
-            border-color: rgba(0, 255, 136, 0.65);
+            border-color: rgba(0, 255, 136, 0.68);
             color: #00ff88;
         }
         .btn-shield:active, .btn-shield.active {
-            background: rgba(0, 255, 136, 0.85);
+            background: rgba(0, 255, 136, 0.88);
             color: #050510;
             box-shadow: 0 0 18px #00ff88;
         }
 
         .btn-missile {
-            border-color: rgba(255, 170, 0, 0.72);
+            border-color: rgba(255, 170, 0, 0.75);
             color: #ffaa00;
         }
         .btn-missile:active, .btn-missile.active {
-            background: rgba(255, 170, 0, 0.85);
+            background: rgba(255, 170, 0, 0.88);
             color: #050510;
             box-shadow: 0 0 18px #ffaa00;
         }
 
         .btn-fire {
-            width: 84px;
-            height: 62px;
-            border-radius: 18px;
+            width: 82px;
+            height: 58px;
+            border-radius: 17px;
             border: 2px solid #ff007f;
-            background: rgba(35, 10, 28, 0.82);
+            background: rgba(35, 10, 28, 0.86);
             color: #ff007f;
-            font-size: 0.8rem;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+            font-size: 0.78rem;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.32);
         }
 
         .btn-fire:active, .btn-fire.active {
@@ -342,10 +342,10 @@
         .overlay-screen {
             position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             height: 100dvh;
-            background: rgba(5, 8, 20, 0.86);
+            background: rgba(5, 8, 20, 0.88);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: flex;
@@ -353,7 +353,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: max(16px, env(safe-area-inset-top)) max(28px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-left));
+            padding: max(14px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
             z-index: 60;
             transition: opacity 0.25s ease;
         }
@@ -364,32 +364,32 @@
 
         .game-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.85rem, 5.5vw, 3.6rem);
+            font-size: clamp(1.75rem, 5vw, 3.4rem);
             font-weight: 900;
             background: linear-gradient(135deg, #00f3ff 0%, #bd00ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 2px;
         }
 
         .game-subtitle {
-            font-size: 1rem;
+            font-size: 0.96rem;
             color: #a8b2d1;
             max-width: 500px;
-            margin-bottom: 24px;
-            line-height: 1.45;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
 
         .btn-arcade {
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 1.05rem;
-            padding: 14px 34px;
+            font-size: 1rem;
+            padding: 13px 32px;
             border-radius: 50px;
             border: 2px solid #00f3ff;
-            background: linear-gradient(135deg, rgba(0, 243, 255, 0.22), rgba(189, 0, 255, 0.22));
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.24), rgba(189, 0, 255, 0.24));
             color: #ffffff;
             cursor: pointer;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.2);
@@ -410,49 +410,50 @@
         }
 
         /* Compact Scaling for 19.5:9 Mobile Landscape & Fullscreen Screens */
-        @media (max-height: 540px) and (orientation: landscape) {
+        @media (max-height: 520px) and (orientation: landscape) {
             #hud {
-                top: max(8px, env(safe-area-inset-top));
-                left: max(20px, env(safe-area-inset-left));
-                right: max(20px, env(safe-area-inset-right));
+                top: max(6px, env(safe-area-inset-top));
+                left: max(18px, env(safe-area-inset-left));
+                right: max(18px, env(safe-area-inset-right));
             }
             #cockpit-overlay {
-                bottom: max(10px, env(safe-area-inset-bottom));
-                left: max(24px, env(safe-area-inset-left));
-                right: max(24px, env(safe-area-inset-right));
+                bottom: max(8px, env(safe-area-inset-bottom));
+                left: max(20px, env(safe-area-inset-left));
+                right: max(20px, env(safe-area-inset-right));
             }
             .hud-box {
                 padding: 4px 10px;
                 gap: 8px;
             }
             .hud-value {
-                font-size: 0.95rem;
-            }
-            #joystick-zone {
-                width: 86px;
-                height: 86px;
-            }
-            #joystick-knob {
-                width: 34px;
-                height: 34px;
-            }
-            .btn-tactical {
-                width: 66px;
-                height: 46px;
-                font-size: 0.64rem;
-            }
-            .btn-fire {
-                width: 76px;
-                height: 54px;
-                font-size: 0.74rem;
-            }
-            .game-subtitle {
-                margin-bottom: 14px;
                 font-size: 0.92rem;
             }
+            #joystick-zone {
+                width: 82px;
+                height: 82px;
+            }
+            #joystick-knob {
+                width: 32px;
+                height: 32px;
+            }
+            .btn-tactical {
+                width: 64px;
+                height: 44px;
+                font-size: 0.62rem;
+                gap: 1px;
+            }
+            .btn-fire {
+                width: 74px;
+                height: 52px;
+                font-size: 0.72rem;
+            }
+            .game-subtitle {
+                margin-bottom: 12px;
+                font-size: 0.88rem;
+            }
             .btn-arcade {
-                padding: 11px 26px;
-                font-size: 0.95rem;
+                padding: 10px 24px;
+                font-size: 0.92rem;
             }
         }
     </style>
@@ -487,8 +488,8 @@
                 </div>
                 <!-- Compact Top-Right Mute & Pause Buttons -->
                 <div class="top-utility-controls">
-                    <button class="btn-utility" id="btn-mute" aria-label="Toggle Sound">🔊</button>
-                    <button class="btn-utility" id="btn-pause" aria-label="Pause Game">⏸</button>
+                    <button type="button" class="btn-utility" id="btn-mute" aria-label="Toggle Sound">🔊</button>
+                    <button type="button" class="btn-utility" id="btn-pause" aria-label="Pause Game">⏸</button>
                 </div>
             </div>
         </div>
@@ -502,22 +503,22 @@
 
             <!-- Right: 4 Tactical Action Switches -->
             <div class="tactical-cluster">
-                <button class="btn-tactical btn-boost" id="btn-boost" aria-label="Speed Boost">
+                <button type="button" class="btn-tactical btn-boost" id="btn-boost" aria-label="Speed Boost">
                     <span class="icon">⚡</span>
                     <span class="label">BOOST</span>
                     <div class="btn-charge-bar" id="boost-bar"></div>
                 </button>
-                <button class="btn-tactical btn-shield" id="btn-shield" aria-label="Activate Shield">
+                <button type="button" class="btn-tactical btn-shield" id="btn-shield" aria-label="Activate Shield">
                     <span class="icon">🛡️</span>
                     <span class="label">SHIELD</span>
                     <div class="btn-charge-bar" id="shield-bar"></div>
                 </button>
-                <button class="btn-tactical btn-missile" id="btn-missile" aria-label="Launch Missile">
+                <button type="button" class="btn-tactical btn-missile" id="btn-missile" aria-label="Launch Missile">
                     <span class="icon">🚀</span>
                     <span class="label">MISSILE</span>
                     <div class="btn-charge-bar" id="missile-bar"></div>
                 </button>
-                <button class="btn-tactical btn-fire" id="btn-fire" aria-label="Fire Primary Laser">
+                <button type="button" class="btn-tactical btn-fire" id="btn-fire" aria-label="Fire Primary Laser">
                     <span class="icon">🔥</span>
                     <span class="label">FIRE</span>
                 </button>
@@ -530,21 +531,21 @@
             <p class="game-subtitle">
                 Pilot your starfighter through deep space asteroid fields. Use Boost, Energy Shield, Homing Missiles, and Primary Lasers to survive the cosmic storm.
             </p>
-            <button id="start-btn" class="btn-arcade">Launch Mission</button>
+            <button type="button" id="start-btn" class="btn-arcade">Launch Mission</button>
         </div>
 
         <!-- Pause Screen Overlay -->
         <div id="pause-screen" class="overlay-screen hidden">
             <h1 class="game-title">MISSION PAUSED</h1>
             <p class="game-subtitle">Systems holding steady. Resume flight whenever you are ready.</p>
-            <button id="resume-btn" class="btn-arcade">Resume</button>
+            <button type="button" id="resume-btn" class="btn-arcade">Resume</button>
         </div>
 
         <!-- Game Over Overlay -->
         <div id="gameover-screen" class="overlay-screen hidden">
             <h1 class="game-title" style="background: linear-gradient(135deg, #ff0055, #ffaa00); -webkit-background-clip: text;">SHIP DESTROYED</h1>
             <p class="game-subtitle" id="final-score-text">Final Score: 0</p>
-            <button id="restart-btn" class="btn-arcade">Play Again</button>
+            <button type="button" id="restart-btn" class="btn-arcade">Play Again</button>
         </div>
     </div>
 </div>
@@ -824,16 +825,16 @@ let floatingTexts = [];
 let stars = [];
 
 function getPlayfieldBounds() {
-    const isLandscapeCompact = width > height && height <= 540;
-    const horizontalPad = isLandscapeCompact ? 96 : 56;
-    const topPad = isLandscapeCompact ? 54 : 68;
-    const bottomPad = isLandscapeCompact ? 76 : 108;
+    const isLandscapeCompact = width > height && height <= 520;
+    const horizontalPad = isLandscapeCompact ? 92 : 52;
+    const topPad = isLandscapeCompact ? 50 : 66;
+    const bottomPad = isLandscapeCompact ? 68 : 104;
 
     return {
-        minX: Math.min(width * 0.25, horizontalPad),
-        maxX: Math.max(width * 0.75, width - horizontalPad),
-        minY: Math.min(height * 0.25, topPad),
-        maxY: Math.max(height * 0.75, height - bottomPad)
+        minX: Math.min(width * 0.22, horizontalPad),
+        maxX: Math.max(width * 0.78, width - horizontalPad),
+        minY: Math.min(height * 0.22, topPad),
+        maxY: Math.max(height * 0.78, height - bottomPad)
     };
 }
 
@@ -865,7 +866,7 @@ function clampEntityPositionsAfterResize() {
     });
 }
 
-// --- True 100% Edge-to-Edge Full-Screen Resize Handler ---
+// --- True Edge-to-Edge Full-Screen Resize Handler ---
 function resizeCanvas() {
     const vv = window.visualViewport;
     const wrapperRect = gameWrapper ? gameWrapper.getBoundingClientRect() : null;
@@ -1890,6 +1891,7 @@ function resetJoystick() {
 
 joystickZone.addEventListener('touchstart', (e) => {
     e.preventDefault();
+    sfx.init();
     const touch = e.changedTouches[0];
     joystickTouchId = touch.identifier;
     updateJoystickPosition(touch.clientX, touch.clientY);
@@ -1906,6 +1908,16 @@ window.addEventListener('touchmove', (e) => {
 }, { passive: false });
 
 window.addEventListener('touchend', (e) => {
+    if (joystickTouchId === null) return;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === joystickTouchId) {
+            resetJoystick();
+            break;
+        }
+    }
+});
+
+window.addEventListener('touchcancel', (e) => {
     if (joystickTouchId === null) return;
     for (let i = 0; i < e.changedTouches.length; i++) {
         if (e.changedTouches[i].identifier === joystickTouchId) {
@@ -1939,12 +1951,14 @@ function bindControlButton(btnId, keyName) {
     const btn = document.getElementById(btnId);
     const press = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         sfx.init();
         keys[keyName] = true;
         btn.classList.add('active');
     };
     const release = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         keys[keyName] = false;
         btn.classList.remove('active');
     };
