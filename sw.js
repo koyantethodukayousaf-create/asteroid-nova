@@ -1,4 +1,4 @@
-const CACHE_NAME = 'asteroid-nova-v14';
+const CACHE_NAME = 'asteroid-nova-v15';
 const ASSETS_TO_CACHE = [
   '/asteroid-nova/',
   '/asteroid-nova/index.html',
@@ -42,6 +42,25 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const isHtmlRequest =
+    event.request.mode === 'navigate' ||
+    (event.request.headers.get('accept') || '').includes('text/html');
+
+  if (isHtmlRequest) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request).then((res) => res || caches.match('/asteroid-nova/index.html')))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -68,26 +87,4 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match('/asteroid-nova/index.html'));
     })
   );
-});
-
-self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.text() : 'New update available in Asteroid Nova!';
-  event.waitUntil(
-    self.registration.showNotification('Asteroid Nova', {
-      body: data,
-      icon: '/asteroid-nova/launchericon-192x192.png'
-    })
-  );
-});
-
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'reconnect-sync') {
-    event.waitUntil(Promise.resolve());
-  }
-});
-
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'daily-update') {
-    event.waitUntil(Promise.resolve());
-  }
 });
