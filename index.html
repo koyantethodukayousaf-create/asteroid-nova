@@ -28,9 +28,8 @@
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
+            width: 100%;
+            height: 100%;
             position: fixed;
             inset: 0;
         }
@@ -41,9 +40,8 @@
         #game-wrapper:-webkit-full-screen {
             position: fixed;
             inset: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
@@ -172,7 +170,7 @@
             transform: scale(0.94);
         }
 
-        /* Floating Cockpit Controls Overlay (Always Visible Over Canvas & Fullscreen) */
+        /* Floating Cockpit Controls Overlay */
         #cockpit-overlay {
             position: fixed;
             bottom: max(12px, env(safe-area-inset-bottom));
@@ -342,9 +340,8 @@
         .overlay-screen {
             position: fixed;
             inset: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
+            width: 100%;
+            height: 100%;
             background: rgba(5, 8, 20, 0.88);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
@@ -409,8 +406,8 @@
             transform: translateY(1px) scale(0.97);
         }
 
-        /* Compact Scaling for 19.5:9 Mobile Landscape & Fullscreen Screens */
-        @media (max-height: 520px) and (orientation: landscape) {
+        /* Compact Scaling for Landscape Mobile Screens */
+        @media (max-height: 540px) and (orientation: landscape) {
             #hud {
                 top: max(6px, env(safe-area-inset-top));
                 left: max(18px, env(safe-area-inset-left));
@@ -461,7 +458,6 @@
 <body>
 
 <div id="game-wrapper">
-    <!-- Full-Viewport Game Canvas Container -->
     <div id="canvas-container">
         <canvas id="gameCanvas"></canvas>
 
@@ -486,7 +482,6 @@
                     <div class="hud-label">Hull</div>
                     <div id="lives-container"></div>
                 </div>
-                <!-- Compact Top-Right Mute & Pause Buttons -->
                 <div class="top-utility-controls">
                     <button type="button" class="btn-utility" id="btn-mute" aria-label="Toggle Sound">🔊</button>
                     <button type="button" class="btn-utility" id="btn-pause" aria-label="Pause Game">⏸</button>
@@ -496,12 +491,10 @@
 
         <!-- Transparent Overlay Cockpit Controls -->
         <div id="cockpit-overlay">
-            <!-- Left: Virtual Analog Joystick -->
             <div id="joystick-zone" aria-label="Flight Joystick">
                 <div id="joystick-knob"></div>
             </div>
 
-            <!-- Right: 4 Tactical Action Switches -->
             <div class="tactical-cluster">
                 <button type="button" class="btn-tactical btn-boost" id="btn-boost" aria-label="Speed Boost">
                     <span class="icon">⚡</span>
@@ -551,14 +544,7 @@
 </div>
 
 <script>
-/**
- * NEON ASTEROID SHOOTER - FULL-SCREEN TACTICAL EDITION
- * True 100% Viewport Canvas + Transparent Cockpit Overlay + Balanced Scoring
- */
-
-// --- DOM Elements ---
 const gameWrapper = document.getElementById('game-wrapper');
-const canvasContainer = document.getElementById('canvas-container');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -577,7 +563,6 @@ const restartBtn = document.getElementById('restart-btn');
 const muteBtn = document.getElementById('btn-mute');
 const pauseBtn = document.getElementById('btn-pause');
 
-// Tactical UI Elements
 const boostBtn = document.getElementById('btn-boost');
 const shieldBtn = document.getElementById('btn-shield');
 const missileBtn = document.getElementById('btn-missile');
@@ -587,7 +572,6 @@ const boostBar = document.getElementById('boost-bar');
 const shieldBar = document.getElementById('shield-bar');
 const missileBar = document.getElementById('missile-bar');
 
-// --- Non-Blocking Fullscreen & Landscape Lock ---
 function lockLandscapeNonBlocking() {
     try {
         const target = gameWrapper || document.documentElement;
@@ -627,7 +611,6 @@ function saveHighScore(score) {
     } catch (e) {}
 }
 
-// --- Web Audio API Synthesizer (Expanded Tactical Audio) ---
 class SoundFX {
     constructor() {
         this.ctx = null;
@@ -775,7 +758,6 @@ class SoundFX {
 
 const sfx = new SoundFX();
 
-// --- Game Configuration & State ---
 let width = window.innerWidth;
 let height = window.innerHeight;
 let dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -795,7 +777,6 @@ const gameState = {
     screenShake: 0
 };
 
-// Input tracking
 const keys = {
     left: false,
     right: false,
@@ -806,14 +787,12 @@ const keys = {
     shield: false
 };
 
-// Virtual Joystick State
 const joystick = {
     active: false,
     angle: 0,
     force: 0
 };
 
-// Game Entities
 let ship = null;
 let bullets = [];
 let missiles = [];
@@ -825,10 +804,10 @@ let floatingTexts = [];
 let stars = [];
 
 function getPlayfieldBounds() {
-    const isLandscapeCompact = width > height && height <= 520;
-    const horizontalPad = isLandscapeCompact ? 92 : 52;
-    const topPad = isLandscapeCompact ? 50 : 66;
-    const bottomPad = isLandscapeCompact ? 68 : 104;
+    const isLandscapeCompact = width > height && height <= 540;
+    const horizontalPad = isLandscapeCompact ? 96 : 52;
+    const topPad = isLandscapeCompact ? 54 : 68;
+    const bottomPad = isLandscapeCompact ? 76 : 112;
 
     return {
         minX: Math.min(width * 0.22, horizontalPad),
@@ -839,9 +818,8 @@ function getPlayfieldBounds() {
 }
 
 function clampEntityPositionsAfterResize() {
-    const pad = 28;
-    const safeW = Math.max(pad * 2, width);
-    const safeH = Math.max(pad * 2, height);
+    const safeW = Math.max(60, width);
+    const safeH = Math.max(60, height);
     const bounds = getPlayfieldBounds();
 
     if (ship) {
@@ -866,22 +844,20 @@ function clampEntityPositionsAfterResize() {
     });
 }
 
-// --- True Edge-to-Edge Full-Screen Resize Handler ---
-function resizeCanvas() {
+function getViewportSize() {
     const vv = window.visualViewport;
-    const wrapperRect = gameWrapper ? gameWrapper.getBoundingClientRect() : null;
-    const clientW = document.documentElement.clientWidth || window.innerWidth;
-    const clientH = document.documentElement.clientHeight || window.innerHeight;
+    const w = (vv && vv.width > 0) ? vv.width : (document.documentElement.clientWidth || window.innerWidth);
+    const h = (vv && vv.height > 0) ? vv.height : (document.documentElement.clientHeight || window.innerHeight);
+    return {
+        w: Math.max(240, Math.round(w)),
+        h: Math.max(200, Math.round(h))
+    };
+}
 
-    const rawW = (wrapperRect && wrapperRect.width > 0)
-        ? wrapperRect.width
-        : (vv && vv.width > 0 ? vv.width : clientW);
-    const rawH = (wrapperRect && wrapperRect.height > 0)
-        ? wrapperRect.height
-        : (vv && vv.height > 0 ? vv.height : clientH);
-
-    width = Math.max(240, Math.round(rawW));
-    height = Math.max(200, Math.round(rawH));
+function resizeCanvas() {
+    const size = getViewportSize();
+    width = size.w;
+    height = size.h;
     dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     canvas.style.width = width + 'px';
@@ -896,11 +872,11 @@ function resizeCanvas() {
 
 function scheduleResizeBurst() {
     resizeCanvas();
-    setTimeout(resizeCanvas, 60);
-    setTimeout(resizeCanvas, 220);
+    setTimeout(resizeCanvas, 80);
+    setTimeout(resizeCanvas, 260);
 }
 
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener('resize', scheduleResizeBurst);
 if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', scheduleResizeBurst);
     window.visualViewport.addEventListener('scroll', resizeCanvas);
@@ -909,14 +885,6 @@ window.addEventListener('orientationchange', scheduleResizeBurst);
 document.addEventListener('fullscreenchange', scheduleResizeBurst);
 document.addEventListener('webkitfullscreenchange', scheduleResizeBurst);
 
-if (typeof ResizeObserver !== 'undefined' && gameWrapper) {
-    const wrapperObserver = new ResizeObserver(() => {
-        resizeCanvas();
-    });
-    wrapperObserver.observe(gameWrapper);
-}
-
-// --- Multi-Layer Parallax Starfield ---
 function initStars() {
     stars = [];
     const starCount = Math.floor((width * height) / 5500);
@@ -934,7 +902,6 @@ function initStars() {
     }
 }
 
-// --- Shockwave Effect Class ---
 class Shockwave {
     constructor(x, y, maxRadius, color) {
         this.x = x;
@@ -965,7 +932,6 @@ class Shockwave {
     }
 }
 
-// --- Floating Score Text Class ---
 class FloatingText {
     constructor(x, y, text, color = '#00f3ff') {
         this.x = x;
@@ -995,7 +961,6 @@ class FloatingText {
     }
 }
 
-// --- Player Ship Class (With Boost, Shield & Homing Missile Systems) ---
 class Ship {
     constructor() {
         const bounds = getPlayfieldBounds();
@@ -1009,7 +974,6 @@ class Ship {
         this.fireCooldown = 0;
         this.rapidFireTimer = 0;
 
-        // Tactical System States
         this.boostEnergy = 100;
         this.isBoosting = false;
 
@@ -1043,12 +1007,8 @@ class Ship {
     }
 
     update(dt = 1) {
-        if (keys.shield) {
-            this.activateShield();
-        }
-        if (keys.missile) {
-            this.launchMissile();
-        }
+        if (keys.shield) this.activateShield();
+        if (keys.missile) this.launchMissile();
 
         if (keys.boost && this.boostEnergy > 4) {
             this.isBoosting = true;
@@ -1225,7 +1185,6 @@ class Ship {
     }
 }
 
-// --- Primary Laser Bullet Class ---
 class Bullet {
     constructor(x, y, angle, color = '#00f3ff') {
         this.x = x;
@@ -1256,7 +1215,6 @@ class Bullet {
     }
 }
 
-// --- Tactical Homing Missile Class ---
 class HomingMissile {
     constructor(x, y, angle) {
         this.x = x;
@@ -1330,7 +1288,6 @@ class HomingMissile {
     }
 }
 
-// --- Asteroid Class ---
 class Asteroid {
     constructor(x, y, size = 3) {
         this.x = x;
@@ -1390,7 +1347,6 @@ class Asteroid {
     }
 }
 
-// --- Explosion Particle Class ---
 class Particle {
     constructor(x, y, vx, vy, color, maxLife = 30) {
         this.x = x;
@@ -1426,7 +1382,6 @@ class Particle {
     }
 }
 
-// --- PowerUp Class ---
 class PowerUp {
     constructor(x, y) {
         this.x = x;
@@ -1471,7 +1426,6 @@ class PowerUp {
     }
 }
 
-// --- Balanced Scoring Helpers ---
 function getAsteroidPoints(size) {
     if (size === 3) return 15;
     if (size === 2) return 25;
@@ -1539,7 +1493,6 @@ function updateHUD() {
     }
 }
 
-// --- Core Game Flow ---
 function startGame() {
     sfx.init();
     resizeCanvas();
@@ -1598,7 +1551,6 @@ function togglePause(forceResume = false) {
     pauseScreen.classList.toggle('hidden', !gameState.paused);
 }
 
-// --- Main Update & Render Loop ---
 function updateGame(dt = 1) {
     if (!gameState.running || gameState.paused) return;
 
@@ -1667,7 +1619,6 @@ function updateGame(dt = 1) {
         }
     }
 
-    // Bullet vs Asteroid Collisions
     for (let b = bullets.length - 1; b >= 0; b--) {
         for (let a = asteroids.length - 1; a >= 0; a--) {
             const bullet = bullets[b];
@@ -1696,7 +1647,6 @@ function updateGame(dt = 1) {
         }
     }
 
-    // Homing Missile Area-of-Effect Detonation
     for (let m = missiles.length - 1; m >= 0; m--) {
         const missile = missiles[m];
         let detonated = false;
@@ -1727,7 +1677,6 @@ function updateGame(dt = 1) {
         }
     }
 
-    // Ship vs Asteroid Collisions
     for (let a = asteroids.length - 1; a >= 0; a--) {
         const ast = asteroids[a];
         const hitDist = ship.shieldActiveTimer > 0 ? 34 + ast.radius : ship.radius + ast.radius - 4;
@@ -1828,7 +1777,6 @@ function gameLoop(now) {
     requestAnimationFrame(gameLoop);
 }
 
-// --- Keyboard Controls ---
 window.addEventListener('keydown', (e) => {
     if (['ArrowLeft', 'KeyA'].includes(e.code)) keys.left = true;
     if (['ArrowRight', 'KeyD'].includes(e.code)) keys.right = true;
@@ -1853,7 +1801,6 @@ window.addEventListener('keyup', (e) => {
     if (e.code === 'KeyQ') keys.missile = false;
 });
 
-// --- Analog Virtual Joystick Logic ---
 const joystickZone = document.getElementById('joystick-zone');
 const joystickKnob = document.getElementById('joystick-knob');
 let joystickTouchId = null;
@@ -1946,7 +1893,6 @@ window.addEventListener('mouseup', () => {
     }
 });
 
-// --- Multi-Touch Tactical Button Binding ---
 function bindControlButton(btnId, keyName) {
     const btn = document.getElementById(btnId);
     const press = (e) => {
@@ -1976,7 +1922,6 @@ bindControlButton('btn-missile', 'missile');
 bindControlButton('btn-boost', 'boost');
 bindControlButton('btn-shield', 'shield');
 
-// UI Button Listeners
 startBtn.addEventListener('click', startGame);
 resumeBtn.addEventListener('click', () => togglePause(true));
 restartBtn.addEventListener('click', restartGame);
@@ -1987,7 +1932,6 @@ muteBtn.addEventListener('click', () => {
     muteBtn.textContent = sfx.muted ? '🔇' : '🔊';
 });
 
-// Initialize Canvas & Start Loop
 window.addEventListener('DOMContentLoaded', resizeCanvas);
 window.onload = function () {
     resizeCanvas();
