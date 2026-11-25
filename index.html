@@ -297,6 +297,41 @@
       -webkit-backdrop-filter: blur(2px);
     }
 
+    @media (orientation: portrait) {
+      #start-screen {
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
+        width: 100dvh;
+        height: 100vw;
+        transform: translate(-50%, -50%) rotate(90deg);
+        transform-origin: center center;
+        padding: 16px 28px;
+      }
+
+      #start-screen .game-title {
+        margin-bottom: 3px;
+        font-size: clamp(1.35rem, 4.8vw, 2.2rem);
+      }
+
+      #start-screen .game-subtitle {
+        max-width: 66ch;
+        margin-bottom: 10px;
+        font-size: .84rem;
+      }
+
+      #start-screen .btn-arcade {
+        padding: 10px 24px;
+        font-size: .84rem;
+      }
+
+      #start-screen .orientation-hint {
+        margin-top: 6px;
+        font-size: .74rem;
+      }
+    }
+
     .hidden { display: none !important; }
 
     .game-title {
