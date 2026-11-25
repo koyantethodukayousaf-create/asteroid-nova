@@ -60,6 +60,14 @@
       touch-action: none;
     }
 
+    #game-wrapper:fullscreen,
+    #game-wrapper:-webkit-full-screen {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: radial-gradient(circle at center, #0d1127 0%, #04040a 100%);
+    }
+
     #canvas-container { position: absolute; inset: 0; overflow: hidden; }
 
     #gameCanvas {
@@ -306,6 +314,15 @@
       line-height: 1.35;
     }
 
+    .orientation-hint {
+      margin-top: 10px;
+      color: var(--amber);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      min-height: 1.1em;
+    }
+
     .btn-arcade {
       padding: 12px 28px;
       border: 2px solid var(--cyan);
@@ -394,6 +411,7 @@
         <h1 class="game-title">ASTEROID NOVA</h1>
         <p class="game-subtitle">Pilot your starfighter through deep-space asteroid fields. Use Boost, Energy Shield, Homing Missiles and Primary Lasers to survive the cosmic storm.</p>
         <button type="button" id="start-btn" class="btn-arcade">Launch Mission</button>
+        <p class="orientation-hint" id="orientation-hint" aria-live="polite"></p>
       </section>
 
       <section id="pause-screen" class="overlay-screen hidden">
@@ -425,6 +443,7 @@
     const pauseScreen = document.getElementById('pause-screen');
     const gameoverScreen = document.getElementById('gameover-screen');
     const finalScoreText = document.getElementById('final-score-text');
+    const orientationHint = document.getElementById('orientation-hint');
     const startBtn = document.getElementById('start-btn');
     const resumeBtn = document.getElementById('resume-btn');
     const restartBtn = document.getElementById('restart-btn');
@@ -477,6 +496,35 @@
     }
 
     gameState.highScore = readHighScore();
+
+    async function enterFullscreenAndLandscape() {
+      try {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          const reqFs = gameWrapper.requestFullscreen || gameWrapper.webkitRequestFullscreen;
+          if (reqFs) {
+            await reqFs.call(gameWrapper);
+          }
+        }
+      } catch (_) {
+        /* Fullscreen may be blocked in some embedded webviews; continue anyway. */
+      }
+
+      try {
+        if (screen.orientation && typeof screen.orientation.lock === 'function') {
+          await screen.orientation.lock('landscape');
+          orientationHint.textContent = '';
+          return;
+        }
+      } catch (_) {
+        /* Orientation lock is restricted on some browsers/devices. */
+      }
+
+      if (window.innerHeight > window.innerWidth) {
+        orientationHint.textContent = 'Rotate your phone to landscape for the best cockpit view.';
+      } else {
+        orientationHint.textContent = '';
+      }
+    }
 
     class SoundFX {
       constructor() { this.ctx = null; this.muted = false; }
@@ -537,8 +585,6 @@
 
     const sfx = new SoundFX();
 
-    /* Use the wrapper's actual CSS rectangle. Do not mix it with visualViewport
-       dimensions: canvas coordinates, HUD and touch controls must share one size. */
     function getPlayfieldBounds() {
       const compactLandscape = width > height;
       const sideInset = compactLandscape ? Math.min(108, width * .16) : 34;
@@ -593,6 +639,8 @@
       height = nextHeight;
       dpr = nextDpr;
 
+      if (width > height) orientationHint.textContent = '';
+
       const pixelWidth = Math.max(1, Math.round(width * dpr));
       const pixelHeight = Math.max(1, Math.round(height * dpr));
       if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
@@ -615,6 +663,8 @@
     }
     window.addEventListener('resize', scheduleResize, { passive: true });
     window.addEventListener('orientationchange', scheduleResize, { passive: true });
+    document.addEventListener('fullscreenchange', scheduleResize, { passive: true });
+    document.addEventListener('webkitfullscreenchange', scheduleResize, { passive: true });
     if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleResize, { passive: true });
 
     class Shockwave {
@@ -926,8 +976,9 @@
       activeButtonPointers.forEach(set => set.clear());
     }
 
-    function startGame() {
+    async function startGame() {
       sfx.init();
+      await enterFullscreenAndLandscape();
       resizeCanvas();
       gameState.running = true; gameState.paused = false; gameState.score = 0;
       gameState.level = 1; gameState.lives = 3; gameState.combo = 1;
