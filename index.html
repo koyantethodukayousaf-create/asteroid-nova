@@ -55,7 +55,7 @@
       height: 100dvh;
       overflow: hidden;
       isolation: isolate;
-      background: radial-gradient(circle at center, #0d1127 0%, #04040a 100%);
+      background: radial-gradient(circle at center, #111636 0%, #04040a 100%);
       touch-action: none;
     }
 
@@ -64,7 +64,7 @@
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      background: radial-gradient(circle at center, #0d1127 0%, #04040a 100%);
+      background: radial-gradient(circle at center, #111636 0%, #04040a 100%);
     }
 
     #canvas-container { position: absolute; inset: 0; overflow: hidden; }
@@ -291,17 +291,17 @@
         max(22px, env(safe-area-inset-right))
         max(14px, env(safe-area-inset-bottom))
         max(22px, env(safe-area-inset-left));
-      background: rgba(5, 8, 20, .88);
+      background: rgba(5, 8, 22, .38);
       text-align: center;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
     }
 
     .hidden { display: none !important; }
 
     .game-title {
       margin-bottom: 5px;
-      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
@@ -309,15 +309,16 @@
       font-size: clamp(1.65rem, 5vw, 3.25rem);
       font-weight: 900;
       letter-spacing: 1.5px;
-      text-shadow: 0 0 24px rgba(0, 243, 255, .2);
+      filter: drop-shadow(0 0 18px rgba(0, 243, 255, .32));
     }
 
     .game-subtitle {
       max-width: 520px;
       margin-bottom: 14px;
-      color: #a8b2d1;
+      color: #d6deff;
       font-size: .95rem;
       line-height: 1.35;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, .85);
     }
 
     .orientation-hint {
@@ -327,20 +328,21 @@
       font-weight: 700;
       letter-spacing: .4px;
       min-height: 1.1em;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, .9);
     }
 
     .btn-arcade {
       padding: 12px 28px;
       border: 2px solid var(--cyan);
       border-radius: 50px;
-      background: linear-gradient(135deg, rgba(0, 243, 255, .24), rgba(189, 0, 255, .24));
+      background: linear-gradient(135deg, rgba(0, 243, 255, .28), rgba(189, 0, 255, .28));
       color: #fff;
       font-family: 'Orbitron', sans-serif;
       font-size: .95rem;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(0, 243, 255, .3), inset 0 0 10px rgba(0, 243, 255, .15);
+      box-shadow: 0 0 24px rgba(0, 243, 255, .35), inset 0 0 12px rgba(0, 243, 255, .18);
       touch-action: manipulation;
     }
 
@@ -499,7 +501,8 @@
 
     const gameState = {
       running: false, paused: false, score: 0, highScore: 0,
-      level: 1, lives: 3, combo: 1, comboTimer: 0, screenShake: 0
+      level: 1, lives: 3, combo: 1, comboTimer: 0, screenShake: 0,
+      galaxyTime: 0
     };
 
     const keys = { left: false, right: false, up: false, fire: false, missile: false, boost: false, shield: false };
@@ -514,6 +517,8 @@
     let powerups = [];
     let floatingTexts = [];
     let stars = [];
+    let nebulaClouds = [];
+    let galaxyRifts = [];
 
     function readHighScore() {
       try { return Number(localStorage.getItem('asteroidNovaHigh')) || 0; }
@@ -652,17 +657,59 @@
       });
     }
 
-    function initStars() {
+    function initGalaxyBackground() {
       stars = [];
-      const starCount = Math.min(260, Math.max(35, Math.floor((width * height) / 5500)));
-      const colors = ['#ffffff', '#cceeff', '#ffddee', '#aaddff'];
+      nebulaClouds = [];
+      galaxyRifts = [];
+
+      const starCount = Math.min(300, Math.max(55, Math.floor((width * height) / 4200)));
+      const colors = ['#ffffff', '#9cf6ff', '#e4a6ff', '#ff9ed2', '#b8dcff'];
       for (let i = 0; i < starCount; i++) {
         const layer = Math.random();
         stars.push({
-          x: Math.random() * width, y: Math.random() * height,
-          radius: layer > .8 ? 1.8 : layer > .4 ? 1.1 : .6,
-          alpha: .25 + layer * .7, speed: .05 + layer * .25,
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: layer > .85 ? 2.1 : layer > .45 ? 1.25 : .7,
+          alpha: .25 + layer * .72,
+          twinkleSpeed: .015 + Math.random() * .035,
+          twinklePhase: Math.random() * Math.PI * 2,
+          speedX: (Math.random() - .5) * .08,
+          speedY: .06 + layer * .28,
           color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+
+      const cloudPalette = [
+        ['rgba(189, 0, 255, 0.24)', 'rgba(85, 10, 165, 0.08)', 'rgba(5, 6, 20, 0)'],
+        ['rgba(0, 243, 255, 0.20)', 'rgba(14, 95, 190, 0.07)', 'rgba(5, 6, 20, 0)'],
+        ['rgba(255, 0, 127, 0.18)', 'rgba(120, 15, 95, 0.06)', 'rgba(5, 6, 20, 0)'],
+        ['rgba(255, 136, 0, 0.14)', 'rgba(130, 45, 25, 0.05)', 'rgba(5, 6, 20, 0)']
+      ];
+      const maxDim = Math.max(width, height);
+      for (let i = 0; i < 7; i++) {
+        const pal = cloudPalette[i % cloudPalette.length];
+        nebulaClouds.push({
+          xRatio: .15 + Math.random() * .7,
+          yRatio: .15 + Math.random() * .7,
+          radius: maxDim * (.24 + Math.random() * .22),
+          driftAngle: Math.random() * Math.PI * 2,
+          driftSpeed: .00022 + Math.random() * .00025,
+          driftAmp: 26 + Math.random() * 34,
+          colors: pal
+        });
+      }
+
+      const riftCount = 2;
+      for (let i = 0; i < riftCount; i++) {
+        galaxyRifts.push({
+          xRatio: i === 0 ? .28 : .74,
+          yRatio: i === 0 ? .36 : .64,
+          rx: maxDim * (.19 + Math.random() * .07),
+          ry: maxDim * (.075 + Math.random() * .035),
+          tilt: (i === 0 ? -.42 : .38) + (Math.random() - .5) * .16,
+          rotSpeed: .00035 * (i === 0 ? 1 : -1),
+          coreColor: i === 0 ? 'rgba(0, 243, 255, 0.34)' : 'rgba(255, 0, 127, 0.30)',
+          armColor: i === 0 ? 'rgba(189, 0, 255, 0.22)' : 'rgba(255, 170, 0, 0.18)'
         });
       }
     }
@@ -687,7 +734,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = true;
 
-      if (changed || stars.length === 0) initStars();
+      if (changed || stars.length === 0) initGalaxyBackground();
       clampEntityPositionsAfterResize();
     }
 
@@ -1148,22 +1195,90 @@
       }
     }
 
+    function drawGalaxyBackground(dt = 1) {
+      const animSpeed = gameState.running && !gameState.paused ? dt : .55 * dt;
+      gameState.galaxyTime += animSpeed;
+
+      ctx.fillStyle = '#04040b';
+      ctx.fillRect(0, 0, width, height);
+
+      const baseGlow = ctx.createRadialGradient(
+        width * .5, height * .46, 20,
+        width * .5, height * .46, Math.max(width, height) * .78
+      );
+      baseGlow.addColorStop(0, 'rgba(34, 16, 78, .42)');
+      baseGlow.addColorStop(.55, 'rgba(10, 18, 46, .28)');
+      baseGlow.addColorStop(1, 'rgba(4, 4, 11, 0)');
+      ctx.fillStyle = baseGlow;
+      ctx.fillRect(0, 0, width, height);
+
+      nebulaClouds.forEach(cloud => {
+        const cx = cloud.xRatio * width + Math.cos(gameState.galaxyTime * cloud.driftSpeed * 12 + cloud.driftAngle) * cloud.driftAmp;
+        const cy = cloud.yRatio * height + Math.sin(gameState.galaxyTime * cloud.driftSpeed * 10 + cloud.driftAngle) * (cloud.driftAmp * .7);
+        const grad = ctx.createRadialGradient(cx, cy, cloud.radius * .05, cx, cy, cloud.radius);
+        grad.addColorStop(0, cloud.colors[0]);
+        grad.addColorStop(.52, cloud.colors[1]);
+        grad.addColorStop(1, cloud.colors[2]);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, cloud.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      galaxyRifts.forEach(rift => {
+        ctx.save();
+        ctx.translate(rift.xRatio * width, rift.yRatio * height);
+        ctx.rotate(rift.tilt + Math.sin(gameState.galaxyTime * rift.rotSpeed * 10) * .04);
+
+        const outerGrad = ctx.createRadialGradient(0, 0, rift.ry * .1, 0, 0, rift.rx);
+        outerGrad.addColorStop(0, rift.coreColor);
+        outerGrad.addColorStop(.45, rift.armColor);
+        outerGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.save();
+        ctx.scale(1, rift.ry / Math.max(1, rift.rx));
+        ctx.fillStyle = outerGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, rift.rx, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.strokeStyle = rift.coreColor;
+        ctx.lineWidth = 1.4;
+        for (let arm = 0; arm < 2; arm++) {
+          ctx.beginPath();
+          for (let t = -1; t <= 1; t += .08) {
+            const px = t * rift.rx * .82;
+            const py = Math.sin(t * Math.PI * 1.4 + arm * Math.PI + gameState.galaxyTime * .008) * (rift.ry * .34);
+            if (t === -1) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      });
+
+      stars.forEach(star => {
+        star.x = (star.x + star.speedX * animSpeed + width) % width;
+        star.y = (star.y + star.speedY * animSpeed) % height;
+        star.twinklePhase += star.twinkleSpeed * animSpeed;
+        const pulse = .72 + .28 * Math.sin(star.twinklePhase);
+        ctx.globalAlpha = Math.max(.08, Math.min(1, star.alpha * pulse));
+        ctx.fillStyle = star.color;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
     function drawGame(dt = 1) {
       ctx.save();
       if (gameState.screenShake > 0) {
         ctx.translate((Math.random() - .5) * gameState.screenShake, (Math.random() - .5) * gameState.screenShake);
       }
       ctx.clearRect(-20, -20, width + 40, height + 40);
-      const gradient = ctx.createRadialGradient(width * .5, height * .5, 40, width * .5, height * .5, Math.max(width, height) * .7);
-      gradient.addColorStop(0, 'rgba(18,26,58,.45)'); gradient.addColorStop(1, 'rgba(4,4,10,0)');
-      ctx.fillStyle = gradient; ctx.fillRect(0, 0, width, height);
-      const starScroll = gameState.running && !gameState.paused ? dt : .25 * dt;
-      stars.forEach(star => {
-        star.y = (star.y + star.speed * starScroll) % height;
-        ctx.globalAlpha = star.alpha; ctx.fillStyle = star.color;
-        ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill();
-      });
-      ctx.globalAlpha = 1;
+      drawGalaxyBackground(dt);
       if (gameState.running) {
         powerups.forEach(p => p.draw()); shockwaves.forEach(s => s.draw()); asteroids.forEach(a => a.draw());
         bullets.forEach(b => b.draw()); missiles.forEach(m => m.draw()); particles.forEach(p => p.draw());
