@@ -5,11 +5,10 @@
   "id": "/asteroid-nova/",
   "start_url": "/asteroid-nova/",
   "scope": "/asteroid-nova/",
-  "display": "standalone",
+  "display": "fullscreen",
   "display_override": [
-    "standalone",
     "fullscreen",
-    "minimal-ui"
+    "standalone"
   ],
   "orientation": "landscape",
   "background_color": "#050510",
