@@ -47,7 +47,6 @@
 
     body { position: fixed; inset: 0; }
 
-    /* Every game layer is anchored to this one measured viewport. */
     #game-wrapper {
       position: fixed;
       inset: 0;
@@ -79,7 +78,6 @@
       pointer-events: none;
     }
 
-    /* HUD and controls are absolute children of the same wrapper as the canvas. */
     #hud {
       position: absolute;
       top: max(6px, env(safe-area-inset-top));
@@ -486,15 +484,13 @@
     let stars = [];
 
     function readHighScore() {
-      try { return Number(localStorage.getItem('asteroidNovaHigh')) |
-
-| 0; }
+      try { return Number(localStorage.getItem('asteroidNovaHigh')) || 0; }
       catch (_) { return 0; }
     }
 
     function saveHighScore(score) {
       try { localStorage.setItem('asteroidNovaHigh', String(score)); }
-      catch (_) { /* Storage may be disabled; the game remains playable. */ }
+      catch (_) {}
     }
 
     gameState.highScore = readHighScore();
@@ -502,16 +498,12 @@
     async function enterFullscreenAndLandscape() {
       try {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-          const reqFs = gameWrapper.requestFullscreen |
-
-| gameWrapper.webkitRequestFullscreen;
+          const reqFs = gameWrapper.requestFullscreen || gameWrapper.webkitRequestFullscreen;
           if (reqFs) {
             await reqFs.call(gameWrapper);
           }
         }
-      } catch (_) {
-        /* Fullscreen may be blocked in some embedded webviews; continue anyway. */
-      }
+      } catch (_) {}
 
       try {
         if (screen.orientation && typeof screen.orientation.lock === 'function') {
@@ -519,9 +511,7 @@
           orientationHint.textContent = '';
           return;
         }
-      } catch (_) {
-        /* Orientation lock is restricted on some browsers/devices. */
-      }
+      } catch (_) {}
 
       if (window.innerHeight > window.innerWidth) {
         orientationHint.textContent = 'Rotate your phone to landscape for the best cockpit view.';
@@ -534,17 +524,13 @@
       constructor() { this.ctx = null; this.muted = false; this.lastExplosionAt = 0; }
       init() {
         if (!this.ctx) {
-          const AudioContextClass = window.AudioContext |
-
-| window.webkitAudioContext;
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           if (AudioContextClass) this.ctx = new AudioContextClass();
         }
         if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
       }
       tone(type, startHz, endHz, duration, volume) {
-        if (this.muted |
-
-| !this.ctx) return;
+        if (this.muted || !this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         const now = this.ctx.currentTime;
@@ -562,9 +548,7 @@
       playBoost() { this.tone('sawtooth', 110, 180, .12, .1); }
       playThrust() { this.tone('triangle', 75, 75, .08, .06); }
       playPowerup() {
-        if (this.muted |
-
-| !this.ctx) return;
+        if (this.muted || !this.ctx) return;
         const now = this.ctx.currentTime;
         [440, 660, 880].forEach((hz, i) => {
           const osc = this.ctx.createOscillator();
@@ -577,9 +561,7 @@
         });
       }
       playExplosion(size = 1) {
-        if (this.muted |
-
-| !this.ctx) return;
+        if (this.muted || !this.ctx) return;
         const nowMs = performance.now();
         if (nowMs - this.lastExplosionAt < 40) return;
         this.lastExplosionAt = nowMs;
@@ -652,12 +634,8 @@
       const rect = gameWrapper.getBoundingClientRect();
       const nextWidth = Math.max(1, rect.width);
       const nextHeight = Math.max(1, rect.height);
-      const nextDpr = Math.min(window.devicePixelRatio |
-
-| 1, 2);
-      const changed = Math.abs(nextWidth - width) > .5 |
-
-| Math.abs(nextHeight - height) > .5;
+      const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+      const changed = Math.abs(nextWidth - width) > .5 || Math.abs(nextHeight - height) > .5;
       width = nextWidth;
       height = nextHeight;
       dpr = nextDpr;
@@ -671,9 +649,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = true;
 
-      if (changed |
-
-| stars.length === 0) initStars();
+      if (changed || stars.length === 0) initStars();
       clampEntityPositionsAfterResize();
     }
 
@@ -765,9 +741,7 @@
           const rotSpeed = .085 * dt;
           if (keys.left) this.angle -= rotSpeed;
           if (keys.right) this.angle += rotSpeed;
-          if (keys.up |
-
-| this.isBoosting) {
+          if (keys.up || this.isBoosting) {
             const thrust = .17 * thrustMultiplier * dt;
             this.vx += Math.cos(this.angle) * thrust; this.vy += Math.sin(this.angle) * thrust;
             this.emitThruster(this.isBoosting);
@@ -1034,10 +1008,7 @@
     }
 
     function updateGame(dt = 1) {
-      if (!gameState.running |
-
-| gameState.paused |
-| !ship) return;
+      if (!gameState.running || gameState.paused || !ship) return;
       if (gameState.screenShake > 0) gameState.screenShake = Math.max(0, gameState.screenShake - dt);
       if (gameState.comboTimer > 0) {
         gameState.comboTimer -= dt;
@@ -1163,9 +1134,7 @@
     function gameLoop(now) {
       const rawDelta = (now - lastFrameTime) / (1000 / 60);
       lastFrameTime = now;
-      const dt = Math.min(2.5, Math.max(.1, rawDelta |
-
-| 1));
+      const dt = Math.min(2.5, Math.max(.1, rawDelta || 1));
       updateGame(dt); drawGame(dt);
       requestAnimationFrame(gameLoop);
     }
@@ -1178,9 +1147,7 @@
       if (['ShiftLeft', 'ShiftRight'].includes(e.code)) keys.boost = true;
       if (e.code === 'KeyE') keys.shield = true;
       if (e.code === 'KeyQ') keys.missile = true;
-      if ((e.code === 'KeyP' |
-
-| e.code === 'Escape') && !e.repeat) togglePause();
+      if ((e.code === 'KeyP' || e.code === 'Escape') && !e.repeat) togglePause();
     });
 
     window.addEventListener('keyup', e => {
