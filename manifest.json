@@ -1,0 +1,196 @@
+{
+  "name": "asteroid-nova",
+  "short_name": "asteroid-nova",
+  "description": "Asteroid Nova - Blast your way through deep space in this fast-paced, neon-drenched arcade shooter! Pilot an agile starfighter through treacherous asteroid fields, shatter incoming meteors into glowing fragments, and survive escalating waves of cosmic chaos.",
+  "id": "/asteroid-nova/",
+  "start_url": "/asteroid-nova/",
+  "scope": "/asteroid-nova/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "window-controls-overlay",
+    "minimal-ui"
+  ],
+  "tab_strip": {
+    "home_tab": {
+      "url": "/asteroid-nova/"
+    },
+    "new_tab_button": {
+      "url": "/asteroid-nova/"
+    }
+  },
+  "orientation": "any",
+  "background_color": "#050510",
+  "theme_color": "#050510",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "games",
+    "arcade"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+  "scope_extensions": [
+    {
+      "origin": "https://koyantethodukayousaf.github.io"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 300
+  },
+  "share_target": {
+    "action": "/asteroid-nova/share-target/",
+    "method": "POST",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/asteroid-nova/handle-file/",
+      "accept": {
+        "image/*": [
+          ".png",
+          ".jpg",
+          ".jpeg"
+        ]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+mypwa",
+      "url": "/asteroid-nova/protocol-handler?value=%s"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Launch Mission",
+      "short_name": "Play",
+      "description": "Start the arcade game",
+      "url": "/asteroid-nova/?play=true",
+      "icons": [
+        {
+          "src": "launchericon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "note_taking": {
+    "new_note_url": "/asteroid-nova/"
+  },
+  "widgets": [
+    {
+      "name": "Asteroid Nova Widget",
+      "description": "Quick status and launch widget for Asteroid Nova",
+      "tag": "asteroid-nova-widget",
+      "template": "asteroid-nova-template",
+      "ms_ac_template": "widget-template.json",
+      "data": "widget-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "launchericon-512x512.png",
+          "sizes": "512x512",
+          "label": "Asteroid Nova Widget Preview"
+        }
+      ],
+      "icons": [
+        {
+          "src": "launchericon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ],
+      "auth": false,
+      "update": 86400
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "IMG_20261122_052359.jpg",
+      "sizes": "1080x1024",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052425.jpg",
+      "sizes": "1080x1047",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052501.jpg",
+      "sizes": "1080x1033",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052521.jpg",
+      "sizes": "1080x1070",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052555.jpg",
+      "sizes": "1080x2160",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052633.jpg",
+      "sizes": "1080x2160",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052659.jpg",
+      "sizes": "1080x2159",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052715.jpg",
+      "sizes": "1080x2156",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "IMG_20261122_052744.jpg",
+      "sizes": "1080x2162",
+      "type": "image/jpeg"
+    }
+  ],
+  "icons": [
+    {
+      "src": "launchericon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
