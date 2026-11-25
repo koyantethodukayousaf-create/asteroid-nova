@@ -486,7 +486,9 @@
     let stars = [];
 
     function readHighScore() {
-      try { return Number(localStorage.getItem('asteroidNovaHigh')) || 0; }
+      try { return Number(localStorage.getItem('asteroidNovaHigh')) |
+
+| 0; }
       catch (_) { return 0; }
     }
 
@@ -500,7 +502,9 @@
     async function enterFullscreenAndLandscape() {
       try {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-          const reqFs = gameWrapper.requestFullscreen || gameWrapper.webkitRequestFullscreen;
+          const reqFs = gameWrapper.requestFullscreen |
+
+| gameWrapper.webkitRequestFullscreen;
           if (reqFs) {
             await reqFs.call(gameWrapper);
           }
@@ -527,16 +531,20 @@
     }
 
     class SoundFX {
-      constructor() { this.ctx = null; this.muted = false; }
+      constructor() { this.ctx = null; this.muted = false; this.lastExplosionAt = 0; }
       init() {
         if (!this.ctx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          const AudioContextClass = window.AudioContext |
+
+| window.webkitAudioContext;
           if (AudioContextClass) this.ctx = new AudioContextClass();
         }
         if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume().catch(() => {});
       }
       tone(type, startHz, endHz, duration, volume) {
-        if (this.muted || !this.ctx) return;
+        if (this.muted |
+
+| !this.ctx) return;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         const now = this.ctx.currentTime;
@@ -554,7 +562,9 @@
       playBoost() { this.tone('sawtooth', 110, 180, .12, .1); }
       playThrust() { this.tone('triangle', 75, 75, .08, .06); }
       playPowerup() {
-        if (this.muted || !this.ctx) return;
+        if (this.muted |
+
+| !this.ctx) return;
         const now = this.ctx.currentTime;
         [440, 660, 880].forEach((hz, i) => {
           const osc = this.ctx.createOscillator();
@@ -567,7 +577,12 @@
         });
       }
       playExplosion(size = 1) {
-        if (this.muted || !this.ctx) return;
+        if (this.muted |
+
+| !this.ctx) return;
+        const nowMs = performance.now();
+        if (nowMs - this.lastExplosionAt < 40) return;
+        this.lastExplosionAt = nowMs;
         const duration = .25 + size * .15;
         const length = Math.floor(this.ctx.sampleRate * duration);
         const buffer = this.ctx.createBuffer(1, length, this.ctx.sampleRate);
@@ -586,16 +601,20 @@
     const sfx = new SoundFX();
 
     function getPlayfieldBounds() {
-      const compactLandscape = width > height;
-      const sideInset = compactLandscape ? Math.min(108, width * .16) : 34;
-      const topInset = compactLandscape ? 50 : 66;
-      const bottomInset = compactLandscape ? 106 : 126;
+      const compact = width > height && height <= 600;
+      const side = compact ? 26 : (width <= 480 ? 30 : 36);
+      const top = compact ? 46 : 62;
+      const bottom = compact ? 48 : 76;
       return {
-        minX: Math.min(width / 2 - 20, sideInset + 18),
-        maxX: Math.max(width / 2 + 20, width - sideInset - 18),
-        minY: Math.min(height / 2 - 20, topInset + 18),
-        maxY: Math.max(height / 2 + 20, height - bottomInset - 18)
+        minX: Math.min(width / 2 - 20, side),
+        maxX: Math.max(width / 2 + 20, width - side),
+        minY: Math.min(height / 2 - 20, top),
+        maxY: Math.max(height / 2 + 20, height - bottom)
       };
+    }
+
+    function getAsteroidScale() {
+      return Math.max(.62, Math.min(1, Math.min(width, height) / 680));
     }
 
     function clampEntityPositionsAfterResize() {
@@ -633,8 +652,12 @@
       const rect = gameWrapper.getBoundingClientRect();
       const nextWidth = Math.max(1, rect.width);
       const nextHeight = Math.max(1, rect.height);
-      const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
-      const changed = Math.abs(nextWidth - width) > .5 || Math.abs(nextHeight - height) > .5;
+      const nextDpr = Math.min(window.devicePixelRatio |
+
+| 1, 2);
+      const changed = Math.abs(nextWidth - width) > .5 |
+
+| Math.abs(nextHeight - height) > .5;
       width = nextWidth;
       height = nextHeight;
       dpr = nextDpr;
@@ -648,7 +671,9 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = true;
 
-      if (changed || stars.length === 0) initStars();
+      if (changed |
+
+| stars.length === 0) initStars();
       clampEntityPositionsAfterResize();
     }
 
@@ -740,7 +765,9 @@
           const rotSpeed = .085 * dt;
           if (keys.left) this.angle -= rotSpeed;
           if (keys.right) this.angle += rotSpeed;
-          if (keys.up || this.isBoosting) {
+          if (keys.up |
+
+| this.isBoosting) {
             const thrust = .17 * thrustMultiplier * dt;
             this.vx += Math.cos(this.angle) * thrust; this.vy += Math.sin(this.angle) * thrust;
             this.emitThruster(this.isBoosting);
@@ -871,7 +898,8 @@
     class Asteroid {
       constructor(x, y, size = 3) {
         this.x = x; this.y = y; this.size = size;
-        this.radius = size === 3 ? 44 : size === 2 ? 24 : 13;
+        const scale = getAsteroidScale();
+        this.radius = (size === 3 ? 44 : size === 2 ? 24 : 13) * scale;
         const baseSpeed = (4 - size) * .72 + gameState.level * .2;
         const angle = Math.random() * Math.PI * 2;
         this.vx = Math.cos(angle) * baseSpeed; this.vy = Math.sin(angle) * baseSpeed;
@@ -1006,7 +1034,10 @@
     }
 
     function updateGame(dt = 1) {
-      if (!gameState.running || gameState.paused || !ship) return;
+      if (!gameState.running |
+
+| gameState.paused |
+| !ship) return;
       if (gameState.screenShake > 0) gameState.screenShake = Math.max(0, gameState.screenShake - dt);
       if (gameState.comboTimer > 0) {
         gameState.comboTimer -= dt;
@@ -1029,7 +1060,8 @@
           if (p.type === 'TRIPLE') { ship.rapidFireTimer = 420; floatingTexts.push(new FloatingText(ship.x, ship.y - 24, 'TRIPLE LASER!', '#bd00ff')); }
           else {
             if (gameState.lives < 5) gameState.lives++;
-            ship.shieldActiveTimer = 180; floatingTexts.push(new FloatingText(ship.x, ship.y - 24, 'HULL + SHIELD!', '#00ff88')); updateHUD();
+            ship.shieldActiveTimer = Math.max(ship.shieldActiveTimer, 180);
+            floatingTexts.push(new FloatingText(ship.x, ship.y - 24, 'HULL + SHIELD!', '#00ff88')); updateHUD();
           }
           spawnExplosion(p.x, p.y, '#00ff88', 15); powerups.splice(i, 1);
         }
@@ -1131,7 +1163,9 @@
     function gameLoop(now) {
       const rawDelta = (now - lastFrameTime) / (1000 / 60);
       lastFrameTime = now;
-      const dt = Math.min(2.5, Math.max(.1, rawDelta || 1));
+      const dt = Math.min(2.5, Math.max(.1, rawDelta |
+
+| 1));
       updateGame(dt); drawGame(dt);
       requestAnimationFrame(gameLoop);
     }
@@ -1144,7 +1178,9 @@
       if (['ShiftLeft', 'ShiftRight'].includes(e.code)) keys.boost = true;
       if (e.code === 'KeyE') keys.shield = true;
       if (e.code === 'KeyQ') keys.missile = true;
-      if ((e.code === 'KeyP' || e.code === 'Escape') && !e.repeat) togglePause();
+      if ((e.code === 'KeyP' |
+
+| e.code === 'Escape') && !e.repeat) togglePause();
     });
 
     window.addEventListener('keyup', e => {
