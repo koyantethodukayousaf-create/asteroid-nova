@@ -9,18 +9,9 @@
   "display_override": [
     "standalone",
     "fullscreen",
-    "window-controls-overlay",
     "minimal-ui"
   ],
-  "tab_strip": {
-    "home_tab": {
-      "url": "/asteroid-nova/"
-    },
-    "new_tab_button": {
-      "url": "/asteroid-nova/"
-    }
-  },
-  "orientation": "any",
+  "orientation": "landscape",
   "background_color": "#050510",
   "theme_color": "#050510",
   "lang": "en",
@@ -39,36 +30,6 @@
   "launch_handler": {
     "client_mode": "focus-existing"
   },
-  "edge_side_panel": {
-    "preferred_width": 300
-  },
-  "share_target": {
-    "action": "/asteroid-nova/share-target/",
-    "method": "POST",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
-  "file_handlers": [
-    {
-      "action": "/asteroid-nova/handle-file/",
-      "accept": {
-        "image/*": [
-          ".png",
-          ".jpg",
-          ".jpeg"
-        ]
-      }
-    }
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+mypwa",
-      "url": "/asteroid-nova/protocol-handler?value=%s"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Launch Mission",
@@ -82,36 +43,6 @@
           "type": "image/png"
         }
       ]
-    }
-  ],
-  "note_taking": {
-    "new_note_url": "/asteroid-nova/"
-  },
-  "widgets": [
-    {
-      "name": "Asteroid Nova Widget",
-      "description": "Quick status and launch widget for Asteroid Nova",
-      "tag": "asteroid-nova-widget",
-      "template": "asteroid-nova-template",
-      "ms_ac_template": "widget-template.json",
-      "data": "widget-data.json",
-      "type": "application/json",
-      "screenshots": [
-        {
-          "src": "launchericon-512x512.png",
-          "sizes": "512x512",
-          "label": "Asteroid Nova Widget Preview"
-        }
-      ],
-      "icons": [
-        {
-          "src": "launchericon-96x96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ],
-      "auth": false,
-      "update": 86400
     }
   ],
   "screenshots": [
