@@ -1,4 +1,4 @@
-const CACHE_NAME = 'asteroid-nova-v17';
+const CACHE_NAME = 'asteroid-nova-v18';
 const ASSETS_TO_CACHE = [
   '/asteroid-nova/',
   '/asteroid-nova/index.html',
@@ -39,7 +39,9 @@ self.addEventListener('fetch', event => {
   const requestURL = new URL(event.request.url);
   const isSameOrigin = requestURL.origin === self.location.origin;
   const isHTML = event.request.mode === 'navigate' ||
-    (event.request.headers.get('accept') || '').includes('text/html');
+    (event.request.headers.get('accept') |
+
+| '').includes('text/html');
 
   if (isHTML) {
     event.respondWith(
