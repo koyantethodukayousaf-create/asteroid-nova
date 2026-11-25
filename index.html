@@ -215,12 +215,20 @@
     .tactical-cluster {
       display: grid;
       grid-template-columns: repeat(2, auto);
+      grid-template-areas:
+        "boost shield"
+        "missile fire";
       align-items: end;
       justify-items: end;
       gap: 8px;
       flex: 0 0 auto;
       pointer-events: auto;
     }
+
+    .btn-boost { grid-area: boost; }
+    .btn-shield { grid-area: shield; }
+    .btn-missile { grid-area: missile; }
+    .btn-fire { grid-area: fire; }
 
     .btn-tactical {
       position: relative;
@@ -338,6 +346,20 @@
 
     .btn-arcade:active { transform: scale(.97); }
 
+    .pause-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .pause-options .btn-arcade {
+      padding: 10px 16px;
+      font-size: .78rem;
+    }
+
     @media (orientation: landscape) and (max-height: 600px) {
       #hud { top: max(4px, env(safe-area-inset-top)); left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); gap: 5px; }
       .hud-left-group, .hud-right-group { gap: 5px; }
@@ -356,6 +378,8 @@
       .game-title { margin-bottom: 1px; font-size: clamp(1.3rem, 5.2vh, 2.15rem); }
       .game-subtitle { max-width: 70ch; margin-bottom: 7px; font-size: .82rem; }
       .btn-arcade { padding: 8px 20px; font-size: .82rem; }
+      .pause-options { gap: 7px; margin-top: 4px; max-width: 340px; }
+      .pause-options .btn-arcade { padding: 7px 14px; font-size: .72rem; }
     }
 
     @media (max-width: 420px) and (orientation: portrait) {
@@ -414,8 +438,13 @@
 
       <section id="pause-screen" class="overlay-screen hidden">
         <h1 class="game-title">MISSION PAUSED</h1>
-        <p class="game-subtitle">Systems holding steady. Resume flight whenever you are ready.</p>
-        <button type="button" id="resume-btn" class="btn-arcade">Resume</button>
+        <p class="game-subtitle">Systems holding steady. Configure settings or resume flight.</p>
+        <div class="pause-options">
+          <button type="button" id="resume-btn" class="btn-arcade">Resume</button>
+          <button type="button" id="settings-sound-btn" class="btn-arcade" style="border-color:var(--green);color:var(--green)">Sound: ON</button>
+          <button type="button" id="settings-restart-btn" class="btn-arcade" style="border-color:var(--amber);color:var(--amber)">Restart</button>
+          <button type="button" id="settings-menu-btn" class="btn-arcade" style="border-color:var(--purple);color:var(--purple)">Main Menu</button>
+        </div>
       </section>
 
       <section id="gameover-screen" class="overlay-screen hidden">
@@ -445,6 +474,9 @@
     const startBtn = document.getElementById('start-btn');
     const resumeBtn = document.getElementById('resume-btn');
     const restartBtn = document.getElementById('restart-btn');
+    const settingsSoundBtn = document.getElementById('settings-sound-btn');
+    const settingsRestartBtn = document.getElementById('settings-restart-btn');
+    const settingsMenuBtn = document.getElementById('settings-menu-btn');
     const muteBtn = document.getElementById('btn-mute');
     const pauseBtn = document.getElementById('btn-pause');
     const boostBtn = document.getElementById('btn-boost');
@@ -581,6 +613,12 @@
     }
 
     const sfx = new SoundFX();
+
+    function syncSoundUI() {
+      muteBtn.textContent = sfx.muted ? '🔇' : '🔊';
+      muteBtn.setAttribute('aria-label', sfx.muted ? 'Turn sound on' : 'Turn sound off');
+      settingsSoundBtn.textContent = sfx.muted ? 'Sound: OFF' : 'Sound: ON';
+    }
 
     function getPlayfieldBounds() {
       const compact = width > height && height <= 600;
@@ -1004,7 +1042,10 @@
       gameState.paused = forceResume ? false : !gameState.paused;
       pauseBtn.textContent = gameState.paused ? '▶' : 'Ⅱ';
       pauseScreen.classList.toggle('hidden', !gameState.paused);
-      if (gameState.paused) clearInputState();
+      if (gameState.paused) {
+        syncSoundUI();
+        clearInputState();
+      }
     }
 
     function updateGame(dt = 1) {
@@ -1021,7 +1062,7 @@
       asteroids.forEach(a => a.update(dt));
       for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(dt); if (particles[i].life <= 0) particles.splice(i, 1); }
       for (let i = shockwaves.length - 1; i >= 0; i--) { shockwaves[i].update(dt); if (shockwaves[i].alpha <= 0) shockwaves.splice(i, 1); }
-      for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(dt); if (floatingTexts[i].life <= 0) floatingTexts.splice(i, 1); }
+      for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(dt); if (floatingTexts[i].life <= 0) floatingTexts[i].splice(i, 1); }
 
       for (let i = powerups.length - 1; i >= 0; i--) {
         const p = powerups[i]; p.update(dt);
@@ -1225,12 +1266,27 @@
     startBtn.addEventListener('click', startGame);
     resumeBtn.addEventListener('click', () => togglePause(true));
     restartBtn.addEventListener('click', startGame);
+    settingsRestartBtn.addEventListener('click', startGame);
+    settingsMenuBtn.addEventListener('click', () => {
+      gameState.running = false;
+      gameState.paused = false;
+      clearInputState();
+      pauseBtn.textContent = 'Ⅱ';
+      pauseScreen.classList.add('hidden');
+      gameoverScreen.classList.add('hidden');
+      startScreen.classList.remove('hidden');
+    });
+    settingsSoundBtn.addEventListener('click', () => {
+      sfx.muted = !sfx.muted;
+      syncSoundUI();
+    });
     pauseBtn.addEventListener('click', () => togglePause());
     muteBtn.addEventListener('click', () => {
-      sfx.muted = !sfx.muted; muteBtn.textContent = sfx.muted ? '🔇' : '🔊';
-      muteBtn.setAttribute('aria-label', sfx.muted ? 'Turn sound on' : 'Turn sound off');
+      sfx.muted = !sfx.muted;
+      syncSoundUI();
     });
 
+    syncSoundUI();
     resizeCanvas();
     updateHUD();
     requestAnimationFrame(gameLoop);
