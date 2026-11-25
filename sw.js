@@ -1,4 +1,4 @@
-const CACHE_NAME = 'asteroid-nova-v18';
+const CACHE_NAME = 'asteroid-nova-v19';
 const ASSETS_TO_CACHE = [
   '/asteroid-nova/',
   '/asteroid-nova/index.html',
