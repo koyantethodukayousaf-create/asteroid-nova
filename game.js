@@ -110,7 +110,6 @@ let stars = [];
 let nebulaClouds = [];
 let bgGalaxies = [];
 
-// Interstellar 3D Launch Scene Entities
 let menuStars3D = [];
 let menuBodies3D = [];
 
@@ -147,6 +146,14 @@ function cycleGraphicsQuality() {
   initGalaxyBackground();
 }
 
+async function lockLandscapeOrientation() {
+  try {
+    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+      await screen.orientation.lock('landscape');
+    }
+  } catch (_) {}
+}
+
 async function enterFullscreenAndLandscape() {
   try {
     const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
@@ -159,16 +166,14 @@ async function enterFullscreenAndLandscape() {
     }
   } catch (_) {}
 
-  try {
-    if (screen.orientation && typeof screen.orientation.lock === 'function') {
-      await screen.orientation.lock('landscape');
-    }
-  } catch (_) {}
+  await lockLandscapeOrientation();
 
   orientationHint.textContent = (window.innerHeight > window.innerWidth)
     ? 'Rotate your device to landscape for the full cockpit layout.' : '';
   scheduleResize();
 }
+
+lockLandscapeOrientation();
 
 startScreen.addEventListener('pointerdown', (e) => {
   if (e.target === startBtn) return;
@@ -464,8 +469,8 @@ if ('ResizeObserver' in window) {
   gameResizeObserver.observe(gameWrapper);
 }
 window.addEventListener('resize', scheduleResize, { passive: true });
-window.addEventListener('orientationchange', scheduleResize, { passive: true });
-window.addEventListener('pageshow', scheduleResize, { passive: true });
+window.addEventListener('orientationchange', () => { lockLandscapeOrientation(); scheduleResize(); }, { passive: true });
+window.addEventListener('pageshow', () => { lockLandscapeOrientation(); scheduleResize(); }, { passive: true });
 document.addEventListener('fullscreenchange', scheduleResize, { passive: true });
 document.addEventListener('webkitfullscreenchange', scheduleResize, { passive: true });
 if (window.visualViewport) {
