@@ -55,7 +55,7 @@
       height: 100dvh;
       overflow: hidden;
       isolation: isolate;
-      background: radial-gradient(circle at center, #111636 0%, #04040a 100%);
+      background: radial-gradient(circle at center, #0e1330 0%, #030308 100%);
       touch-action: none;
     }
 
@@ -64,7 +64,7 @@
       width: 100vw;
       height: 100vh;
       height: 100dvh;
-      background: radial-gradient(circle at center, #111636 0%, #04040a 100%);
+      background: radial-gradient(circle at center, #0e1330 0%, #030308 100%);
     }
 
     #canvas-container { position: absolute; inset: 0; overflow: hidden; }
@@ -89,6 +89,7 @@
       justify-content: space-between;
       gap: 8px;
       pointer-events: none;
+      transition: opacity .25s ease;
     }
 
     .hud-left-group, .hud-right-group {
@@ -174,6 +175,14 @@
       justify-content: space-between;
       align-items: flex-end;
       gap: 10px;
+      pointer-events: none;
+      transition: opacity .25s ease;
+    }
+
+    #game-wrapper.menu-mode #hud,
+    #game-wrapper.menu-mode #cockpit-overlay {
+      opacity: 0;
+      visibility: hidden;
       pointer-events: none;
     }
 
@@ -281,14 +290,47 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       padding:
         max(14px, env(safe-area-inset-top))
         max(22px, env(safe-area-inset-right))
         max(14px, env(safe-area-inset-bottom))
         max(22px, env(safe-area-inset-left));
-      background: rgba(5, 8, 22, .45);
+      background: radial-gradient(circle at center, rgba(6, 10, 28, .22) 0%, rgba(3, 5, 14, .58) 100%);
       text-align: center;
+    }
+
+    #start-screen {
+      perspective: 900px;
+    }
+
+    .hero-3d-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      animation: heroFloat3D 5.5s ease-in-out infinite;
+    }
+
+    @keyframes heroFloat3D {
+      0%, 100% {
+        transform: translateZ(0px) rotateX(6deg) rotateY(-4deg) scale(1);
+      }
+      50% {
+        transform: translateZ(26px) rotateX(-4deg) rotateY(4deg) scale(1.03);
+      }
+    }
+
+    .mission-kicker {
+      font-family: 'Orbitron', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      text-shadow: 0 0 12px rgba(0, 243, 255, .75);
+      margin-bottom: 4px;
     }
 
     @media (orientation: portrait) {
@@ -305,19 +347,19 @@
       }
 
       #start-screen .game-title {
-        margin-bottom: 3px;
-        font-size: clamp(1.35rem, 4.8vw, 2.2rem);
+        margin-bottom: 4px;
+        font-size: clamp(1.5rem, 5.4vw, 2.5rem);
       }
 
       #start-screen .game-subtitle {
-        max-width: 66ch;
-        margin-bottom: 10px;
-        font-size: .84rem;
+        max-width: 62ch;
+        margin-bottom: 12px;
+        font-size: .86rem;
       }
 
       #start-screen .btn-arcade {
-        padding: 10px 24px;
-        font-size: .84rem;
+        padding: 11px 28px;
+        font-size: .88rem;
       }
 
       #start-screen .orientation-hint {
@@ -329,25 +371,25 @@
     .hidden { display: none !important; }
 
     .game-title {
-      margin-bottom: 5px;
-      background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 32%, var(--purple) 68%, var(--pink) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.55rem, 5vw, 3.25rem);
+      font-size: clamp(1.75rem, 5.4vw, 3.5rem);
       font-weight: 900;
-      letter-spacing: 1.5px;
-      filter: drop-shadow(0 0 18px rgba(0, 243, 255, .32));
+      letter-spacing: 2.5px;
+      filter: drop-shadow(0 6px 0 rgba(0, 120, 180, .45)) drop-shadow(0 0 24px rgba(0, 243, 255, .45));
     }
 
     .game-subtitle {
-      max-width: 520px;
-      margin-bottom: 14px;
-      color: #d6deff;
-      font-size: .95rem;
-      line-height: 1.35;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, .85);
+      max-width: 540px;
+      margin-bottom: 16px;
+      color: #e2e8ff;
+      font-size: .98rem;
+      line-height: 1.38;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .95);
     }
 
     .orientation-hint {
@@ -361,17 +403,18 @@
     }
 
     .btn-arcade {
-      padding: 12px 28px;
+      padding: 13px 32px;
       border: 2px solid var(--cyan);
       border-radius: 50px;
-      background: linear-gradient(135deg, rgba(0, 243, 255, .28), rgba(189, 0, 255, .28));
+      background: linear-gradient(135deg, rgba(0, 243, 255, .32), rgba(189, 0, 255, .34));
       color: #fff;
       font-family: 'Orbitron', sans-serif;
-      font-size: .95rem;
+      font-size: .96rem;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 1.4px;
       text-transform: uppercase;
-      box-shadow: 0 0 24px rgba(0, 243, 255, .35), inset 0 0 12px rgba(0, 243, 255, .18);
+      box-shadow: 0 0 28px rgba(0, 243, 255, .45), inset 0 0 14px rgba(0, 243, 255, .24);
+      backdrop-filter: blur(6px);
       touch-action: manipulation;
     }
 
@@ -406,9 +449,9 @@
       .btn-tactical { width: clamp(55px, 8vw, 66px); height: clamp(39px, 13dvh, 47px); border-radius: 9px; font-size: .57rem; gap: 1px; }
       .btn-tactical .icon { font-size: .82rem; }
       .btn-fire { width: clamp(64px, 9vw, 75px); height: clamp(43px, 15dvh, 52px); font-size: .65rem; }
-      .game-title { margin-bottom: 1px; font-size: clamp(1.3rem, 5.2vh, 2.15rem); }
-      .game-subtitle { max-width: 70ch; margin-bottom: 7px; font-size: .82rem; }
-      .btn-arcade { padding: 8px 20px; font-size: .82rem; }
+      .game-title { margin-bottom: 2px; font-size: clamp(1.45rem, 5.6vh, 2.35rem); }
+      .game-subtitle { max-width: 68ch; margin-bottom: 9px; font-size: .82rem; }
+      .btn-arcade { padding: 9px 22px; font-size: .82rem; }
       .pause-options { gap: 7px; margin-top: 4px; max-width: 340px; }
       .pause-options .btn-arcade { padding: 7px 14px; font-size: .72rem; }
     }
@@ -425,7 +468,7 @@
   </style>
 </head>
 <body>
-  <main id="game-wrapper" aria-label="Asteroid Nova game">
+  <main id="game-wrapper" class="menu-mode" aria-label="Asteroid Nova game">
     <div id="canvas-container">
       <canvas id="gameCanvas" aria-hidden="true"></canvas>
 
@@ -461,10 +504,13 @@
       </section>
 
       <section id="start-screen" class="overlay-screen">
-        <h1 class="game-title">ASTEROID NOVA</h1>
-        <p class="game-subtitle">Pilot your starfighter through deep-space asteroid fields. Use Boost, Energy Shield, Homing Missiles and Primary Lasers to survive the cosmic storm.</p>
-        <button type="button" id="start-btn" class="btn-arcade">Launch Mission</button>
-        <p class="orientation-hint" id="orientation-hint" aria-live="polite"></p>
+        <div class="hero-3d-stage">
+          <span class="mission-kicker">INTERGALACTIC SECTOR // 09</span>
+          <h1 class="game-title">ASTEROID NOVA</h1>
+          <p class="game-subtitle">Pilot your starfighter through deep-space asteroid fields. Use Boost, Energy Shield, Homing Missiles and Primary Lasers to survive the cosmic storm.</p>
+          <button type="button" id="start-btn" class="btn-arcade">Launch Mission</button>
+          <p class="orientation-hint" id="orientation-hint" aria-live="polite"></p>
+        </div>
       </section>
 
       <section id="pause-screen" class="overlay-screen hidden">
@@ -550,6 +596,10 @@
     let stars = [];
     let nebulaClouds = [];
     let galaxyRifts = [];
+
+    // 3D Warp Launch Screen Scene Entities
+    let menuStars3D = [];
+    let menuBodies3D = [];
 
     function readHighScore() {
       try { return Number(localStorage.getItem('asteroidNovaHigh')) || 0; }
@@ -696,6 +746,58 @@
       });
     }
 
+    function create3DBody(zOverride = null) {
+      const types = ['planet', 'galaxy', 'asteroid', 'planet', 'asteroid'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 160 + Math.random() * 520;
+      const planetPalettes = [
+        ['#00f3ff', '#1b2b7a', '#070b24'],
+        ['#ff007f', '#6b1056', '#160417'],
+        ['#bd00ff', '#3a0d82', '#0b0422'],
+        ['#ffaa00', '#8f3b0c', '#1c0904']
+      ];
+      const pal = planetPalettes[Math.floor(Math.random() * planetPalettes.length)];
+      const verts = [];
+      const n = 10;
+      for (let i = 0; i < n; i++) {
+        const theta = (i / n) * Math.PI * 2;
+        const v = .76 + Math.random() * .42;
+        verts.push({ x: Math.cos(theta) * v, y: Math.sin(theta) * v });
+      }
+      return {
+        type,
+        x: Math.cos(angle) * dist,
+        y: Math.sin(angle) * dist,
+        z: zOverride !== null ? zOverride : (650 + Math.random() * 950),
+        baseSize: type === 'planet' ? (36 + Math.random() * 34) : type === 'galaxy' ? (54 + Math.random() * 42) : (18 + Math.random() * 20),
+        hasRing: type === 'planet' && Math.random() < .55,
+        ringTilt: (Math.random() - .5) * .8,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - .5) * .018,
+        palette: pal,
+        vertices: verts
+      };
+    }
+
+    function initMenu3DScene() {
+      menuStars3D = [];
+      menuBodies3D = [];
+      const starColors = ['#ffffff', '#9cf6ff', '#e4a6ff', '#ff9ed2', '#ffdd99'];
+      for (let i = 0; i < 210; i++) {
+        menuStars3D.push({
+          x: (Math.random() - .5) * 1800,
+          y: (Math.random() - .5) * 1800,
+          z: 40 + Math.random() * 1460,
+          pz: 1500,
+          color: starColors[Math.floor(Math.random() * starColors.length)]
+        });
+      }
+      for (let i = 0; i < 14; i++) {
+        menuBodies3D.push(create3DBody(180 + i * 105));
+      }
+    }
+
     function initGalaxyBackground() {
       stars = [];
       nebulaClouds = [];
@@ -751,6 +853,8 @@
           armColor: i === 0 ? 'rgba(189, 0, 255, 0.22)' : 'rgba(255, 170, 0, 0.18)'
         });
       }
+
+      if (menuStars3D.length === 0) initMenu3DScene();
     }
 
     function resizeCanvas() {
@@ -1115,6 +1219,7 @@
       await enterFullscreenAndLandscape();
       resizeCanvas();
       renderedLivesCount = -1;
+      gameWrapper.classList.remove('menu-mode');
       gameState.running = true; gameState.paused = false; gameState.score = 0;
       gameState.level = 1; gameState.lives = 3; gameState.combo = 1;
       gameState.comboTimer = 0; gameState.screenShake = 0;
@@ -1183,7 +1288,7 @@
       for (let i = 0; i < asteroids.length; i++) asteroids[i].update(dt);
       for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(dt); if (particles[i].life <= 0) particles.splice(i, 1); }
       for (let i = shockwaves.length - 1; i >= 0; i--) { shockwaves[i].update(dt); if (shockwaves[i].alpha <= 0) shockwaves.splice(i, 1); }
-      for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(dt); if (floatingTexts[i].life <= 0) floatingTexts[i].splice(i, 1); }
+      for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(dt); if (floatingTexts[i].life <= 0) floatingTexts.splice(i, 1); }
 
       for (let i = powerups.length - 1; i >= 0; i--) {
         const p = powerups[i]; p.update(dt);
@@ -1294,6 +1399,168 @@
       }
     }
 
+    function draw3DWarpLaunchScene(dt = 1) {
+      gameState.galaxyTime += dt;
+      const cx = width * .5;
+      const cy = height * .5;
+      const fov = Math.min(width, height) * .68;
+
+      ctx.fillStyle = '#03030a';
+      ctx.fillRect(0, 0, width, height);
+
+      // Deep nebula horizon glow
+      const coreGlow = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(width, height) * .72);
+      coreGlow.addColorStop(0, 'rgba(0, 243, 255, .18)');
+      coreGlow.addColorStop(.32, 'rgba(189, 0, 255, .20)');
+      coreGlow.addColorStop(.68, 'rgba(255, 0, 127, .09)');
+      coreGlow.addColorStop(1, 'rgba(3, 3, 10, 0)');
+      ctx.fillStyle = coreGlow;
+      ctx.fillRect(0, 0, width, height);
+
+      // Drifting 3D Nebula Clouds
+      nebulaClouds.forEach((cloud, idx) => {
+        const orbit = gameState.galaxyTime * .004 + idx * 1.1;
+        const nx = cx + Math.cos(orbit) * (width * .26);
+        const ny = cy + Math.sin(orbit * .8) * (height * .22);
+        const rad = cloud.radius * .75;
+        const grad = ctx.createRadialGradient(nx, ny, rad * .05, nx, ny, rad);
+        grad.addColorStop(0, cloud.colors[0]);
+        grad.addColorStop(.55, cloud.colors[1]);
+        grad.addColorStop(1, cloud.colors[2]);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(nx, ny, rad, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3D Warp Stars streaming past the ship
+      const starSpeed = 11.5 * dt;
+      for (let i = 0; i < menuStars3D.length; i++) {
+        const s = menuStars3D[i];
+        s.pz = s.z;
+        s.z -= starSpeed;
+        if (s.z <= 12) {
+          s.x = (Math.random() - .5) * 1800;
+          s.y = (Math.random() - .5) * 1800;
+          s.z = 1480;
+          s.pz = 1480;
+        }
+        const sx = cx + (s.x / s.z) * fov;
+        const sy = cy + (s.y / s.z) * fov;
+        const px = cx + (s.x / s.pz) * fov;
+        const py = cy + (s.y / s.pz) * fov;
+        const alpha = Math.min(1, (1500 - s.z) / 900);
+        const thickness = Math.max(.8, (1 - s.z / 1500) * 2.8);
+
+        ctx.strokeStyle = s.color;
+        ctx.globalAlpha = alpha * .88;
+        ctx.lineWidth = thickness;
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(sx, sy);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      // Sort 3D celestial bodies back-to-front (painter's algorithm)
+      const bodySpeed = 5.4 * dt;
+      for (let i = 0; i < menuBodies3D.length; i++) {
+        const b = menuBodies3D[i];
+        b.z -= bodySpeed;
+        b.rot += b.rotSpeed * dt;
+        if (b.z <= 45) {
+          menuBodies3D[i] = create3DBody(1450 + Math.random() * 250);
+        }
+      }
+      menuBodies3D.sort((a, b) => b.z - a.z);
+
+      for (let i = 0; i < menuBodies3D.length; i++) {
+        const b = menuBodies3D[i];
+        const scale = fov / b.z;
+        const sx = cx + b.x * scale;
+        const sy = cy + b.y * scale;
+        const r = b.baseSize * scale;
+
+        if (sx + r * 2 < 0 || sx - r * 2 > width || sy + r * 2 < 0 || sy - r * 2 > height) continue;
+
+        const fadeIn = Math.min(1, (1550 - b.z) / 380);
+        const fadeOut = Math.min(1, (b.z - 45) / 110);
+        const alpha = Math.max(0, Math.min(1, fadeIn * fadeOut));
+
+        ctx.save();
+        ctx.translate(sx, sy);
+        ctx.globalAlpha = alpha;
+
+        if (b.type === 'planet') {
+          const pGrad = ctx.createRadialGradient(-r * .32, -r * .32, r * .1, 0, 0, r);
+          pGrad.addColorStop(0, b.palette[0]);
+          pGrad.addColorStop(.55, b.palette[1]);
+          pGrad.addColorStop(1, b.palette[2]);
+
+          ctx.fillStyle = pGrad;
+          ctx.beginPath();
+          ctx.arc(0, 0, r, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = b.palette[0];
+          ctx.lineWidth = Math.max(1, r * .04);
+          ctx.stroke();
+
+          if (b.hasRing) {
+            ctx.save();
+            ctx.rotate(b.ringTilt);
+            ctx.strokeStyle = b.palette[0];
+            ctx.lineWidth = Math.max(1.2, r * .08);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, r * 1.85, r * .44, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          }
+        } else if (b.type === 'galaxy') {
+          ctx.rotate(b.rot);
+          const gGrad = ctx.createRadialGradient(0, 0, r * .06, 0, 0, r * 1.5);
+          gGrad.addColorStop(0, 'rgba(255, 255, 255, .85)');
+          gGrad.addColorStop(.25, 'rgba(0, 243, 255, .42)');
+          gGrad.addColorStop(.6, 'rgba(189, 0, 255, .22)');
+          gGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = gGrad;
+          ctx.beginPath();
+          ctx.arc(0, 0, r * 1.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = 'rgba(0, 243, 255, .55)';
+          ctx.lineWidth = Math.max(1, r * .04);
+          for (let arm = 0; arm < 2; arm++) {
+            ctx.beginPath();
+            for (let t = 0; t <= 1; t += .08) {
+              const ang = t * Math.PI * 2.2 + arm * Math.PI;
+              const dist = t * r * 1.3;
+              const px = Math.cos(ang) * dist;
+              const py = Math.sin(ang) * dist * .52;
+              if (t === 0) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
+        } else {
+          ctx.rotate(b.rot);
+          ctx.fillStyle = 'rgba(14, 10, 28, .92)';
+          ctx.strokeStyle = '#ff007f';
+          ctx.lineWidth = Math.max(1.2, r * .07);
+          ctx.beginPath();
+          b.vertices.forEach((v, idx) => {
+            if (idx === 0) ctx.moveTo(v.x * r, v.y * r);
+            else ctx.lineTo(v.x * r, v.y * r);
+          });
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
     function drawGalaxyBackground(dt = 1) {
       const animSpeed = gameState.running && !gameState.paused ? dt : .55 * dt;
       gameState.galaxyTime += animSpeed;
@@ -1377,11 +1644,16 @@
         ctx.translate((Math.random() - .5) * gameState.screenShake, (Math.random() - .5) * gameState.screenShake);
       }
       ctx.clearRect(-20, -20, width + 40, height + 40);
-      drawGalaxyBackground(dt);
-      if (gameState.running) {
-        powerups.forEach(p => p.draw()); shockwaves.forEach(s => s.draw()); asteroids.forEach(a => a.draw());
-        bullets.forEach(b => b.draw()); missiles.forEach(m => m.draw()); particles.forEach(p => p.draw());
-        floatingTexts.forEach(f => f.draw()); if (ship) ship.draw();
+
+      if (!startScreen.classList.contains('hidden')) {
+        draw3DWarpLaunchScene(dt);
+      } else {
+        drawGalaxyBackground(dt);
+        if (gameState.running) {
+          powerups.forEach(p => p.draw()); shockwaves.forEach(s => s.draw()); asteroids.forEach(a => a.draw());
+          bullets.forEach(b => b.draw()); missiles.forEach(m => m.draw()); particles.forEach(p => p.draw());
+          floatingTexts.forEach(f => f.draw()); if (ship) ship.draw();
+        }
       }
       ctx.restore();
     }
@@ -1490,6 +1762,7 @@
       gameState.running = false;
       gameState.paused = false;
       clearInputState();
+      gameWrapper.classList.add('menu-mode');
       pauseBtn.textContent = 'Ⅱ';
       pauseScreen.classList.add('hidden');
       gameoverScreen.classList.add('hidden');
