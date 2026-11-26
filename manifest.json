@@ -11,7 +11,7 @@
     "standalone",
     "minimal-ui"
   ],
-  "orientation": "any",
+  "orientation": "landscape",
   "background_color": "#020308",
   "theme_color": "#020308",
   "lang": "en",
