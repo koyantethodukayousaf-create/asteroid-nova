@@ -110,6 +110,7 @@ let stars = [];
 let nebulaClouds = [];
 let bgGalaxies = [];
 
+// Interstellar 3D Launch Scene Entities
 let menuStars3D = [];
 let menuBodies3D = [];
 
@@ -156,9 +157,7 @@ async function enterFullscreenAndLandscape() {
         if (result && typeof result.then === 'function') await result;
       }
     }
-  } catch (error) {
-    console.info('Fullscreen is unavailable in this browser; use the installed app for immersive mode.', error);
-  }
+  } catch (_) {}
 
   try {
     if (screen.orientation && typeof screen.orientation.lock === 'function') {
