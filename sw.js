@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'asteroid-nova-v34';
+const CACHE_NAME = 'asteroid-nova-v35';
 const BASE_PATH = '/asteroid-nova/';
 const ASSETS_TO_CACHE = [
   BASE_PATH,
