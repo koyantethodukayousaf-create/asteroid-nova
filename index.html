@@ -298,7 +298,7 @@
         max(22px, env(safe-area-inset-right))
         max(14px, env(safe-area-inset-bottom))
         max(22px, env(safe-area-inset-left));
-      background: radial-gradient(circle at center, rgba(4, 7, 18, .12) 0%, rgba(2, 3, 10, .48) 100%);
+      background: radial-gradient(circle at center, rgba(4, 7, 18, .18) 0%, rgba(2, 3, 10, .62) 100%);
       text-align: center;
     }
 
@@ -390,7 +390,7 @@
 
     .game-subtitle {
       max-width: 540px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       color: #dbe4ff;
       font-size: .98rem;
       line-height: 1.4;
@@ -427,16 +427,21 @@
 
     .pause-options {
       display: grid;
-      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      grid-template-columns: repeat(2, minmax(135px, 1fr));
       gap: 10px;
-      margin-top: 10px;
+      margin-top: 8px;
       width: 100%;
-      max-width: 360px;
+      max-width: 390px;
     }
 
     .pause-options .btn-arcade {
-      padding: 10px 16px;
-      font-size: .78rem;
+      padding: 10px 14px;
+      font-size: .74rem;
+      letter-spacing: 1px;
+    }
+
+    .pause-options .btn-wide {
+      grid-column: 1 / -1;
     }
 
     @media (orientation: landscape) and (max-height: 600px) {
@@ -455,10 +460,10 @@
       .btn-tactical .icon { font-size: .82rem; }
       .btn-fire { width: clamp(64px, 9vw, 75px); height: clamp(43px, 15dvh, 52px); font-size: .65rem; }
       .game-title { margin-bottom: 2px; font-size: clamp(1.45rem, 5.6vh, 2.35rem); }
-      .game-subtitle { max-width: 68ch; margin-bottom: 9px; font-size: .82rem; }
+      .game-subtitle { max-width: 68ch; margin-bottom: 8px; font-size: .82rem; }
       .btn-arcade { padding: 9px 22px; font-size: .82rem; }
-      .pause-options { gap: 7px; margin-top: 4px; max-width: 340px; }
-      .pause-options .btn-arcade { padding: 7px 14px; font-size: .72rem; }
+      .pause-options { gap: 7px; margin-top: 4px; max-width: 370px; }
+      .pause-options .btn-arcade { padding: 7px 12px; font-size: .7rem; }
     }
 
     @media (max-width: 420px) and (orientation: portrait) {
@@ -520,10 +525,11 @@
 
       <section id="pause-screen" class="overlay-screen hidden">
         <h1 class="game-title">MISSION PAUSED</h1>
-        <p class="game-subtitle">Systems holding steady. Configure settings or resume flight.</p>
+        <p class="game-subtitle">Systems holding steady. Configure graphics, sound, or resume flight.</p>
         <div class="pause-options">
           <button type="button" id="resume-btn" class="btn-arcade">Resume</button>
           <button type="button" id="settings-sound-btn" class="btn-arcade" style="border-color:var(--green);color:var(--green)">Sound: ON</button>
+          <button type="button" id="settings-graphics-btn" class="btn-arcade btn-wide" style="border-color:var(--cyan);color:var(--cyan)">Graphics: MEDIUM</button>
           <button type="button" id="settings-restart-btn" class="btn-arcade" style="border-color:var(--amber);color:var(--amber)">Restart</button>
           <button type="button" id="settings-menu-btn" class="btn-arcade" style="border-color:var(--purple);color:var(--purple)">Main Menu</button>
         </div>
@@ -557,6 +563,7 @@
     const resumeBtn = document.getElementById('resume-btn');
     const restartBtn = document.getElementById('restart-btn');
     const settingsSoundBtn = document.getElementById('settings-sound-btn');
+    const settingsGraphicsBtn = document.getElementById('settings-graphics-btn');
     const settingsRestartBtn = document.getElementById('settings-restart-btn');
     const settingsMenuBtn = document.getElementById('settings-menu-btn');
     const muteBtn = document.getElementById('btn-mute');
@@ -571,6 +578,37 @@
     const joystickZone = document.getElementById('joystick-zone');
     const joystickKnob = document.getElementById('joystick-knob');
 
+    const GRAPHICS_MODES = ['NORMAL', 'MEDIUM', 'ULTRA'];
+    const GRAPHICS_CONFIG = {
+      NORMAL: {
+        particleMultiplier: 0.6,
+        maxParticles: 150,
+        starDensityDivisor: 6200,
+        nebulaCount: 4,
+        galaxyCount: 1,
+        craterDetail: 0.65,
+        glowEnabled: false
+      },
+      MEDIUM: {
+        particleMultiplier: 1.0,
+        maxParticles: 240,
+        starDensityDivisor: 4000,
+        nebulaCount: 7,
+        galaxyCount: 2,
+        craterDetail: 1.0,
+        glowEnabled: true
+      },
+      ULTRA: {
+        particleMultiplier: 1.45,
+        maxParticles: 360,
+        starDensityDivisor: 2700,
+        nebulaCount: 10,
+        galaxyCount: 3,
+        craterDetail: 1.35,
+        glowEnabled: true
+      }
+    };
+
     let width = 1;
     let height = 1;
     let dpr = 1;
@@ -579,13 +617,29 @@
     let gameResizeObserver = null;
     let renderedLivesCount = -1;
     const MAX_COMBO = 5;
-    const MAX_PARTICLES = 240;
+
+    function readGraphicsQuality() {
+      try {
+        const saved = localStorage.getItem('asteroidNovaGraphics');
+        if (saved && GRAPHICS_CONFIG[saved]) return saved;
+      } catch (_) {}
+      return 'MEDIUM';
+    }
+
+    function saveGraphicsQuality(mode) {
+      try { localStorage.setItem('asteroidNovaGraphics', mode); }
+      catch (_) {}
+    }
 
     const gameState = {
       running: false, paused: false, score: 0, highScore: 0,
       level: 1, lives: 3, combo: 1, comboTimer: 0, screenShake: 0,
-      galaxyTime: 0
+      galaxyTime: 0, graphicsQuality: readGraphicsQuality()
     };
+
+    function getGraphicsProfile() {
+      return GRAPHICS_CONFIG[gameState.graphicsQuality] || GRAPHICS_CONFIG.MEDIUM;
+    }
 
     const keys = { left: false, right: false, up: false, fire: false, missile: false, boost: false, shield: false };
     const joystick = { active: false, angle: 0, force: 0 };
@@ -605,7 +659,6 @@
     // Interstellar 3D Launch Scene Entities
     let menuStars3D = [];
     let menuBodies3D = [];
-    let menuDust3D = [];
 
     function readHighScore() {
       try { return Number(localStorage.getItem('asteroidNovaHigh')) || 0; }
@@ -619,20 +672,44 @@
 
     gameState.highScore = readHighScore();
 
-    async function enterFullscreenAndLandscape() {
+    function syncGraphicsUI() {
+      settingsGraphicsBtn.textContent = `Graphics: ${gameState.graphicsQuality}`;
+      const colorMap = {
+        NORMAL: 'var(--amber)',
+        MEDIUM: 'var(--cyan)',
+        ULTRA: '#e066ff'
+      };
+      const col = colorMap[gameState.graphicsQuality] || 'var(--cyan)';
+      settingsGraphicsBtn.style.borderColor = col;
+      settingsGraphicsBtn.style.color = col;
+    }
+
+    function cycleGraphicsQuality() {
+      const idx = GRAPHICS_MODES.indexOf(gameState.graphicsQuality);
+      const next = GRAPHICS_MODES[(idx + 1) % GRAPHICS_MODES.length];
+      gameState.graphicsQuality = next;
+      saveGraphicsQuality(next);
+      syncGraphicsUI();
+      initGalaxyBackground();
+    }
+
+    function enterFullscreenAndLandscape() {
       try {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
           const reqFs = gameWrapper.requestFullscreen || gameWrapper.webkitRequestFullscreen || document.documentElement.requestFullscreen;
           if (reqFs) {
-            await reqFs.call(gameWrapper);
+            const p = reqFs.call(gameWrapper);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
           }
         }
       } catch (_) {}
 
       try {
         if (screen.orientation && typeof screen.orientation.lock === 'function') {
-          await screen.orientation.lock('landscape');
-          orientationHint.textContent = '';
+          const p = screen.orientation.lock('landscape');
+          if (p && typeof p.then === 'function') {
+            p.then(() => { orientationHint.textContent = ''; }).catch(() => {});
+          }
           return;
         }
       } catch (_) {}
@@ -825,7 +902,6 @@
     function initMenu3DScene() {
       menuStars3D = [];
       menuBodies3D = [];
-      menuDust3D = [];
       const starColors = ['#ffffff', '#dbeafe', '#fef3c7', '#e0e7ff', '#bae6fd'];
 
       for (let i = 0; i < 240; i++) {
@@ -845,11 +921,12 @@
     }
 
     function initGalaxyBackground() {
+      const profile = getGraphicsProfile();
       stars = [];
       nebulaClouds = [];
       bgGalaxies = [];
 
-      const starCount = Math.min(280, Math.max(70, Math.floor((width * height) / 4000)));
+      const starCount = Math.min(360, Math.max(60, Math.floor((width * height) / profile.starDensityDivisor)));
       const colors = ['#ffffff', '#dbeafe', '#fef3c7', '#e9d5ff', '#bae6fd'];
       for (let i = 0; i < starCount; i++) {
         const layer = Math.random();
@@ -873,7 +950,7 @@
         ['rgba(180, 83, 9, 0.14)', 'rgba(41, 20, 10, 0.06)', 'rgba(2, 3, 8, 0)']
       ];
       const maxDim = Math.max(width, height);
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < profile.nebulaCount; i++) {
         const pal = cloudPalette[i % cloudPalette.length];
         nebulaClouds.push({
           xRatio: .1 + Math.random() * .8,
@@ -886,12 +963,12 @@
         });
       }
 
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < profile.galaxyCount; i++) {
         bgGalaxies.push({
-          xRatio: i === 0 ? .24 : .76,
-          yRatio: i === 0 ? .32 : .68,
-          radius: maxDim * (.14 + Math.random() * .05),
-          tilt: i === 0 ? -.48 : .42,
+          xRatio: i === 0 ? .24 : i === 1 ? .76 : .52,
+          yRatio: i === 0 ? .32 : i === 1 ? .68 : .22,
+          radius: maxDim * (.13 + Math.random() * .05),
+          tilt: i === 0 ? -.48 : i === 1 ? .42 : -.22,
           tiltY: .44,
           rot: Math.random() * Math.PI * 2,
           rotSpeed: .0012 * (i === 0 ? 1 : -1),
@@ -1051,10 +1128,11 @@
         missileBar.style.width = `${missilePct}%`; missileBtn.classList.toggle('cooldown', this.missileCooldown > 0);
       }
       emitThruster(isBoost = false) {
-        if (particles.length >= MAX_PARTICLES) return;
+        const maxP = getGraphicsProfile().maxParticles;
+        if (particles.length >= maxP) return;
         const count = isBoost ? 2 : 1;
         for (let i = 0; i < count; i++) {
-          if (Math.random() < .85 && particles.length < MAX_PARTICLES) {
+          if (Math.random() < .85 && particles.length < maxP) {
             const a = this.angle + Math.PI + (Math.random() - .5) * (isBoost ? .6 : .4);
             particles.push(new Particle(
               this.x - Math.cos(this.angle) * 16, this.y - Math.sin(this.angle) * 16,
@@ -1133,7 +1211,8 @@
         }
         this.vx = Math.cos(this.angle) * this.speed; this.vy = Math.sin(this.angle) * this.speed;
         this.x = (this.x + this.vx * dt + width) % width; this.y = (this.y + this.vy * dt + height) % height;
-        if (particles.length < MAX_PARTICLES) {
+        const maxP = getGraphicsProfile().maxParticles;
+        if (particles.length < maxP) {
           particles.push(new Particle(
             this.x - Math.cos(this.angle) * 8, this.y - Math.sin(this.angle) * 8,
             (Math.random() - .5) * 1.5, (Math.random() - .5) * 1.5, '#ffab00', 16
@@ -1176,58 +1255,87 @@
         this.rotSpeed = (Math.random() - 0.5) * 0.035;
 
         this.vertices = [];
-        const n = 12 + Math.floor(Math.random() * 6);
+        const n = 14 + Math.floor(Math.random() * 6);
         for (let i = 0; i < n; i++) {
           const theta = (i / n) * Math.PI * 2;
-          const variance = 0.76 + Math.random() * 0.42;
+          const variance = 0.75 + Math.random() * 0.44;
           this.vertices.push({
             x: Math.cos(theta) * this.radius * variance,
             y: Math.sin(theta) * this.radius * variance
           });
         }
 
+        // Rich volcanic crimson-red palette for large/red asteroids, warm amber/gold for smaller tiers
         const palettes = {
           3: {
-            light: '#ff70ad',
-            mid: '#9d174d',
-            dark: '#1b0714',
-            rim: '#ff2a85',
-            craterFill: 'rgba(12, 3, 10, 0.65)',
-            craterRim: 'rgba(255, 130, 185, 0.25)'
+            coreHot: '#ff9e7d',
+            light: '#ef233c',
+            mid: '#7f121f',
+            dark: '#190408',
+            rim: '#ff4d6d',
+            glow: 'rgba(239, 35, 60, 0.28)',
+            craterFill: 'rgba(10, 2, 5, 0.78)',
+            craterRim: 'rgba(255, 140, 130, 0.36)',
+            veinColor: 'rgba(255, 110, 75, 0.22)'
           },
           2: {
-            light: '#ffb347',
-            mid: '#9a3412',
-            dark: '#1c0b04',
-            rim: '#ff8800',
-            craterFill: 'rgba(15, 5, 1, 0.65)',
-            craterRim: 'rgba(255, 190, 90, 0.25)'
+            coreHot: '#ffd180',
+            light: '#fb6f24',
+            mid: '#8a2be2'.replace('#8a2be2', '#7c240d'),
+            dark: '#190803',
+            rim: '#ff9e3d',
+            glow: 'rgba(251, 111, 36, 0.22)',
+            craterFill: 'rgba(14, 5, 2, 0.72)',
+            craterRim: 'rgba(255, 200, 120, 0.3)',
+            veinColor: 'rgba(255, 165, 60, 0.18)'
           },
           1: {
-            light: '#fff078',
-            mid: '#854d0e',
-            dark: '#1a1403',
-            rim: '#ffdd00',
-            craterFill: 'rgba(18, 13, 2, 0.6)',
-            craterRim: 'rgba(255, 245, 150, 0.25)'
+            coreHot: '#fff59d',
+            light: '#f5b700',
+            mid: '#6e4709',
+            dark: '#171003',
+            rim: '#ffe066',
+            glow: 'rgba(245, 183, 0, 0.18)',
+            craterFill: 'rgba(16, 11, 2, 0.68)',
+            craterRim: 'rgba(255, 245, 165, 0.28)',
+            veinColor: 'rgba(255, 225, 100, 0.15)'
           }
         };
         this.palette = palettes[size] || palettes[3];
         this.color = this.palette.rim;
 
+        const detailFactor = getGraphicsProfile().craterDetail;
         this.craters = [];
-        if (this.radius >= 12) {
-          const craterCount = size === 3 ? 4 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 2);
+        if (this.radius >= 10) {
+          const baseCraters = size === 3 ? (5 + Math.floor(Math.random() * 3)) : (2 + Math.floor(Math.random() * 3));
+          const craterCount = Math.max(2, Math.round(baseCraters * detailFactor));
           for (let c = 0; c < craterCount; c++) {
-            const cDist = (0.18 + Math.random() * 0.45) * this.radius;
+            const cDist = (0.14 + Math.random() * 0.48) * this.radius;
             const cAngle = Math.random() * Math.PI * 2;
-            const cRadius = Math.max(2.2, this.radius * (0.11 + Math.random() * 0.12));
+            const cRadius = Math.max(2.0, this.radius * (0.10 + Math.random() * 0.13));
             this.craters.push({
               x: Math.cos(cAngle) * cDist,
               y: Math.sin(cAngle) * cDist,
-              r: cRadius
+              r: cRadius,
+              rot: Math.random() * Math.PI * 2
             });
           }
+        }
+
+        // Subtle surface fissures/ridges for realistic rock texture
+        this.ridges = [];
+        const ridgeCount = size === 3 ? 3 : 2;
+        for (let r = 0; r < ridgeCount; r++) {
+          const a1 = Math.random() * Math.PI * 2;
+          const d1 = this.radius * (0.2 + Math.random() * 0.35);
+          const a2 = a1 + (Math.random() - 0.5) * 1.1;
+          const d2 = d1 + this.radius * (0.2 + Math.random() * 0.25);
+          this.ridges.push({
+            x1: Math.cos(a1) * d1,
+            y1: Math.sin(a1) * d1,
+            x2: Math.cos(a2) * d2,
+            y2: Math.sin(a2) * d2
+          });
         }
       }
 
@@ -1247,23 +1355,36 @@
       }
 
       draw() {
+        const profile = getGraphicsProfile();
         ctx.save();
         ctx.translate(this.x, this.y);
+
+        if (profile.glowEnabled && this.size === 3) {
+          const aura = ctx.createRadialGradient(0, 0, this.radius * 0.55, 0, 0, this.radius * 1.45);
+          aura.addColorStop(0, this.palette.glow);
+          aura.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = aura;
+          ctx.beginPath();
+          ctx.arc(0, 0, this.radius * 1.45, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
         ctx.rotate(this.rotation);
 
         this.tracePath();
         const grad = ctx.createRadialGradient(
-          -this.radius * 0.35,
-          -this.radius * 0.35,
-          this.radius * 0.08,
-          this.radius * 0.15,
-          this.radius * 0.15,
-          this.radius * 1.25
+          -this.radius * 0.38,
+          -this.radius * 0.38,
+          this.radius * 0.05,
+          this.radius * 0.12,
+          this.radius * 0.12,
+          this.radius * 1.28
         );
-        grad.addColorStop(0, this.palette.light);
-        grad.addColorStop(0.45, this.palette.mid);
-        grad.addColorStop(0.88, this.palette.dark);
-        grad.addColorStop(1, '#05060c');
+        grad.addColorStop(0, this.palette.coreHot);
+        grad.addColorStop(0.24, this.palette.light);
+        grad.addColorStop(0.62, this.palette.mid);
+        grad.addColorStop(0.9, this.palette.dark);
+        grad.addColorStop(1, '#040307');
 
         ctx.fillStyle = grad;
         ctx.fill();
@@ -1271,24 +1392,46 @@
         ctx.save();
         ctx.clip();
 
-        this.craters.forEach(cr => {
-          ctx.fillStyle = this.palette.craterFill;
+        // Subtle rock ridges/fissures
+        ctx.strokeStyle = this.palette.veinColor;
+        ctx.lineWidth = Math.max(1, this.radius * 0.035);
+        this.ridges.forEach(rg => {
           ctx.beginPath();
-          ctx.arc(cr.x, cr.y, cr.r, 0, Math.PI * 2);
+          ctx.moveTo(rg.x1, rg.y1);
+          ctx.lineTo(rg.x2, rg.y2);
+          ctx.stroke();
+        });
+
+        // Craters with inner shadow and lit rim
+        this.craters.forEach(cr => {
+          ctx.save();
+          ctx.translate(cr.x, cr.y);
+          ctx.rotate(cr.rot);
+          ctx.scale(1, 0.82);
+
+          const cGrad = ctx.createRadialGradient(-cr.r * 0.2, -cr.r * 0.2, cr.r * 0.1, 0, 0, cr.r);
+          cGrad.addColorStop(0, this.palette.craterFill);
+          cGrad.addColorStop(0.8, 'rgba(25, 6, 12, 0.55)');
+          cGrad.addColorStop(1, 'rgba(255, 130, 120, 0.12)');
+          ctx.fillStyle = cGrad;
+          ctx.beginPath();
+          ctx.arc(0, 0, cr.r, 0, Math.PI * 2);
           ctx.fill();
 
           ctx.strokeStyle = this.palette.craterRim;
-          ctx.lineWidth = 1;
+          ctx.lineWidth = Math.max(0.8, cr.r * 0.14);
           ctx.beginPath();
-          ctx.arc(cr.x - cr.r * 0.15, cr.y - cr.r * 0.15, cr.r * 0.9, Math.PI * 0.8, Math.PI * 1.85);
+          ctx.arc(0, 0, cr.r * 0.92, Math.PI * 0.85, Math.PI * 1.95);
           ctx.stroke();
+
+          ctx.restore();
         });
 
         ctx.restore();
 
         this.tracePath();
         ctx.strokeStyle = this.palette.rim;
-        ctx.lineWidth = Math.max(1.5, 2.2 * (this.radius / 44));
+        ctx.lineWidth = Math.max(1.5, 2.3 * (this.radius / 44));
         ctx.stroke();
 
         ctx.restore();
@@ -1327,7 +1470,9 @@
     function getAsteroidPoints(size) { return size === 3 ? 15 : size === 2 ? 25 : 40; }
 
     function spawnExplosion(x, y, color, count = 16) {
-      const safeCount = Math.min(count, Math.max(0, MAX_PARTICLES - particles.length));
+      const profile = getGraphicsProfile();
+      const scaledCount = Math.round(count * profile.particleMultiplier);
+      const safeCount = Math.min(scaledCount, Math.max(0, profile.maxParticles - particles.length));
       for (let i = 0; i < safeCount; i++) {
         const angle = Math.random() * Math.PI * 2; const speed = Math.random() * 4.5 + 1;
         particles.push(new Particle(x, y, Math.cos(angle) * speed, Math.sin(angle) * speed, color, 25 + Math.random() * 20));
@@ -1383,20 +1528,28 @@
       activeButtonPointers.forEach(set => set.clear());
     }
 
-    async function startGame() {
+    function startGame() {
       sfx.init();
-      await enterFullscreenAndLandscape();
+      // Start immediately without blocking on async fullscreen/orientation lock
+      startScreen.classList.add('hidden');
+      pauseScreen.classList.add('hidden');
+      gameoverScreen.classList.add('hidden');
+      gameWrapper.classList.remove('menu-mode');
+      pauseBtn.textContent = 'Ⅱ';
+
       resizeCanvas();
       renderedLivesCount = -1;
-      gameWrapper.classList.remove('menu-mode');
       gameState.running = true; gameState.paused = false; gameState.score = 0;
       gameState.level = 1; gameState.lives = 3; gameState.combo = 1;
       gameState.comboTimer = 0; gameState.screenShake = 0;
       bullets = []; missiles = []; asteroids = []; particles = []; shockwaves = []; powerups = []; floatingTexts = [];
-      ship = new Ship(); spawnAsteroidsForLevel(gameState.level); updateHUD(); clearInputState();
-      startScreen.classList.add('hidden'); pauseScreen.classList.add('hidden'); gameoverScreen.classList.add('hidden');
-      pauseBtn.textContent = 'Ⅱ';
+      ship = new Ship();
+      spawnAsteroidsForLevel(gameState.level);
+      updateHUD();
+      clearInputState();
       lastFrameTime = performance.now();
+
+      enterFullscreenAndLandscape();
     }
 
     function gameOver() {
@@ -1413,6 +1566,7 @@
       pauseScreen.classList.toggle('hidden', !gameState.paused);
       if (gameState.paused) {
         syncSoundUI();
+        syncGraphicsUI();
         clearInputState();
       }
     }
@@ -1969,6 +2123,7 @@
       sfx.muted = !sfx.muted;
       syncSoundUI();
     });
+    settingsGraphicsBtn.addEventListener('click', cycleGraphicsQuality);
     pauseBtn.addEventListener('click', () => togglePause());
     muteBtn.addEventListener('click', () => {
       sfx.muted = !sfx.muted;
@@ -1976,6 +2131,7 @@
     });
 
     syncSoundUI();
+    syncGraphicsUI();
     resizeCanvas();
     updateHUD();
     requestAnimationFrame(gameLoop);
